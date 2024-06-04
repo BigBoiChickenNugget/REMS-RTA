@@ -1,0 +1,11 @@
+[Unit]
+Description=Service that handles RTA requests
+After=multi-user.target
+
+[Service]
+Type=simple
+Restart=always
+ExecStart=/usr/bin/python3 /home/rems006/REMS-RTA/RTA/RTA.py
+
+[Install]
+WantedBy=multi-user.target

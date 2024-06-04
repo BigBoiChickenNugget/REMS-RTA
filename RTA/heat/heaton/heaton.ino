@@ -5,5 +5,5 @@ void setup() {
 }
 
 void loop() {
-	digitalWrite(HEAT, HIGH);
+	digitalWrite(HEAT, LOW);
 }

@@ -1,0 +1,4 @@
+#! /bin/bash
+
+arduino-cli compile --fqbn arduino:avr:mega ~/REMS-RTA/REMS/REMS.ino
+arduino-cli upload -p /dev/ttyACM0 --fqbn arduino:avr:mega ~/REMS-RTA/REMS/REMS.ino

@@ -178,11 +178,11 @@ void ClientResponse(EthernetClient client) {
     // HEAT LOGIC
     if (searchResponse(httpResponse, "heatrequest")) {
 	digitalWrite(HEATREQUEST, LOW);
-	Serial.println("  TRY HEAT  ");
+	Serial.println("  HEAT ON  ");
     }
     else {
 	digitalWrite(HEATREQUEST, HIGH);
-	Serial.println("  NO HEAT  ");
+	Serial.println("  HEAT OFF  ");
     }
 
 
