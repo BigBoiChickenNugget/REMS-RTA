@@ -1,0 +1,102 @@
+#define HEATREQUESTED 3
+#define HEAT 8
+
+#define COOLREQUESTED 4
+#define COOL 5
+
+#define SMOKEALARM 6
+#define WATERLEAK 7
+
+#define POWERSHUTOFF 9
+
+#define WATERSHUTOFF A0
+
+#define HELPBUZZ 13
+
+#define MOTION 10
+
+#define NOISE 11
+
+void setup() {
+    Serial.begin(9600);
+
+    pinMode(HEATREQUESTED, INPUT);
+    pinMode(HEAT, OUTPUT);
+
+    pinMode(COOLREQUESTED, INPUT);
+    pinMode(COOL, OUTPUT);
+
+    pinMode(SMOKEALARM, OUTPUT);
+    pinMode(WATERLEAK, OUTPUT);
+
+    pinMode(POWERSHUTOFF, INPUT);
+
+    pinMode(WATERSHUTOFF, INPUT);
+
+    pinMode(HELPBUZZ, OUTPUT);
+
+    pinMode(MOTION, OUTPUT);
+
+    pinMode(NOISE, OUTPUT);
+}
+
+void loop() {
+    Serial.println(digitalRead(HEATREQUESTED));
+    digitalWrite(HEAT, LOW);
+    /*
+    Serial.print(digitalRead(COOLREQUESTED));
+    digitalWrite(HEAT, HIGH);
+    digitalWrite(COOL, HIGH);
+    digitalWrite(WATERLEAK, HIGH);
+    digitalWrite(SMOKEALARM, HIGH);*/
+    //Serial.print(digitalRead(POWERSHUTOFF));
+    //Serial.print(digitalRead(WATERSHUTOFF));
+    //Serial.println();
+    /*if (digitalRead(HEATREQUESTED)) {
+	Serial.println("HEAT REQUESTED");
+	digitalWrite(HEAT, LOW);
+    }
+    //else digitalWrite(HEAT, HIGH);
+    delay(100);
+
+    if (digitalRead(COOLREQUESTED)) {
+	Serial.println("COOL REQUESTED");
+	digitalWrite(COOL, LOW);
+    }
+    //else digitalWrite(COOL, HIGH);
+
+    delay(100);
+    if (!digitalRead(COOLREQUESTED) && !digitalRead(HEATREQUESTED)) {
+	Serial.println("NEITHER");
+    }
+    delay(100);
+    */
+
+    /*
+    // Uncomment for smoke alarm.
+    //digitalWrite(SMOKEALARM, LOW);
+    digitalWrite(SMOKEALARM, HIGH);
+
+    if (digitalRead(POWERSHUTOFF)) {
+	//Serial.println("POWER SHUT OFF");
+    }
+
+    if (digitalRead(WATERSHUTOFF)) {
+	//Serial.println("WATER SHUT OFF");
+    }
+
+    // Uncomment for "help buzz".
+    //digitalWrite(HELPBUZZ, LOW);
+    //digitalWrite(HELPBUZZ, HIGH);
+
+    // Uncomment for motion
+    //digitalWrite(MOTION, LOW);
+    //digitalWrite(MOTION, HIGH);
+
+    // Uncomment for noise
+    //digitalWrite(NOISE, LOW);
+    //digitalWrite(NOISE, HIGH);
+
+    delay(1);
+    */
+}
