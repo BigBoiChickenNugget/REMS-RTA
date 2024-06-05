@@ -10,14 +10,18 @@ while True:
 
     remsCommand = str(REMS.readline());
     if "HEAT ON" in remsCommand:
-        RTA.write(bytes("HEAT ON", "utf-8"))
+        print("HEAT");
+        RTA.write(bytes("A", "utf-8"))
 
     elif "HEAT OFF" in remsCommand:
-        RTA.write(bytes("HEAT OFF", "utf-8"))
+        print("NO HEAT")
+        RTA.write(bytes("B", "utf-8"))
 
     if "COOL ON" in remsCommand:
-        RTA.write(bytes("COOL ON", "utf-8"))
+        print("COOL");
+        RTA.write(bytes("C", "utf-8"))
 
     if "COOL OFF" in remsCommand:
-        RTA.write(bytes("COOL OFF", "utf-8"))
+        print("COOL OFF");
+        RTA.write(bytes("D", "utf-8"))
 

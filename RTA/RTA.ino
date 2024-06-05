@@ -8,14 +8,30 @@ void setup() {
 }
 
 void loop() {
-	switch(Serial.readline().trim()) {
-		case "HEATON":
+	if (Serial.available()) {
+		char command = char(Serial.read());
+		if (command == 'A') {
 			digitalWrite(HEAT, LOW);
-		case "HEATOFF":
+		}
+		if (command == 'B') {
 			digitalWrite(HEAT, HIGH);
-		case "COOLON":
+		}
+		if (command == 'C') {
 			digitalWrite(COOL, LOW);
-		case "COOLOFF":
+		}
+		if (command == 'D') {
 			digitalWrite(COOL, HIGH);
+		}
+
+		/*switch(char(Serial.read())) {
+			case 'A':
+				digitalWrite(HEAT, LOW);
+			case 'B':
+				digitalWrite(HEAT, HIGH);
+			case 'C':
+				digitalWrite(COOL, LOW);
+			case 'D':
+				digitalWrite(COOL, HIGH);
+		}*/
 	}
 }

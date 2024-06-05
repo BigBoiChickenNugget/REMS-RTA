@@ -189,8 +189,12 @@ void ClientResponse(EthernetClient client) {
     // COOL LOGIC
     if (searchResponse(httpResponse, "coolrequest")) {
 	digitalWrite(COOLREQUEST, LOW);
+	Serial.println("  COOL ON  ");
     }
-    else digitalWrite(COOLREQUEST, HIGH);
+    else {
+	digitalWrite(COOLREQUEST, HIGH);
+	Serial.println("  COOL OFF  ");
+    }
 
     // POWER SHUT OFF LOGIC
     if (searchResponse(httpResponse, "powerOff")) {
