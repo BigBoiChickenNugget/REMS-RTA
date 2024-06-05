@@ -186,9 +186,6 @@ void ClientResponse(EthernetClient client) {
 
     // Button that submits the state of the checkboxes and calls the JavaScript function to send the state of the buttons to the Arduino.
     client.println("<button onclick='DoStuff()'><h4>Do Stuff</h4></button>");
-    client.println("</body>");
-
-    client.println("</html>");
 
 
     // If the user wants the heating on, print that request to the Serial monitor.
@@ -232,6 +229,10 @@ void ClientResponse(EthernetClient client) {
     if (digitalRead(SMOKEALARM)) {
 	client.println("<p>Smoke Alarm received from REMS006</p>");
     }
+
+    // End html
+    client.println("</body>");
+    client.println("</html>");
 }
 
 // Searches the http response and checks what the state is of the current item I'm looking for.
