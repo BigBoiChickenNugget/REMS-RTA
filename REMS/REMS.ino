@@ -1,32 +1,38 @@
+// Libraries for Ethernet connection.
 #include <SPI.h>
 #include <Ethernet.h>
-//#include <WebSocketServer.h>
 
-// For temperature
+// Libraries for temperature sensors (need to implement).
 #include <OneWire.h>
 #include <DallasTemperature.h>
 
+// Pins for making heating and cooling requests.
 #define HEATREQUEST 31
 #define COOLREQUEST 35
 
+// Pins on which the sound sensors are.
 #define SOUNDSENSOR1 23
 #define SOUNDSENSOR2 25
 #define SOUNDSENSOR3 27
 #define SOUNDSENSOR4 23
 
+// Pins on which the motion sensors are.
 #define MOTIONSENSOR1 30
 #define MOTIONSENSOR2 32
 #define MOTIONSENSOR3 34
 #define MOTIONSENSOR4 36
 
+// Pin to receive smoke alarm on signal from RTA.
 #define SMOKEALARM 43
 
+// Pin to shut power off.
 #define POWERSHUTOFF 21
 
+// Pin to shut water off.
 #define WATERSHUTOFF 33
 
 
-// Temperature setup
+// Temperature pins setup.
 #define ONE_WIRE_BUS_1 37
 #define ONE_WIRE_BUS_2 39
 #define ONE_WIRE_BUS_3 41
@@ -39,28 +45,29 @@ DallasTemperature sensor_1(&onewire_1);
 DallasTemperature sensor_2(&onewire_2);
 DallasTemperature sensor_3(&onewire_3);
 
+// Mac address of Arduino REMS board.
 byte mac[] = {
     0x2C, 0xF7, 0xF1, 0x08, 0x33, 0x4E
 };
 
+// IP address for the webpage.
 IPAddress ip(192, 168, 3, 160);
 
 EthernetServer server(80);
-//WebSocketServer wsServer(8080);
 
+// String that'll store the response from the webpage.
 String httpResponse;
 
 void setup() {
 
+    // Begin serial monitor.
     Serial.begin(9600);
 
+    // Start webserver.
     Ethernet.begin(mac, ip);
     server.begin();
-    //wsServer.begin();
 
-    //Serial.print("server is at ");
-    //Serial.println(Ethernet.localIP());
-
+    // Setup all pins.
     pinMode(HEATREQUEST, OUTPUT);
     pinMode(COOLREQUEST, OUTPUT);
 
@@ -79,57 +86,41 @@ void setup() {
     pinMode(POWERSHUTOFF, OUTPUT);
     digitalWrite(POWERSHUTOFF, LOW);
 
+    // Start temperature sensors.
     sensor_1.begin();
     sensor_2.begin();
     sensor_3.begin();
 }
 
-void readRequest(EthernetClient client) {
-
-    boolean post = false;
-    httpResponse = "";
-    String line = client.readStringUntil('\r');
-
-    if (line.indexOf("POST") != -1) {
-	post = true;
-    }
-
-    while (client.connected()) {
-	String line = client.readStringUntil('\r');
-	httpResponse += line;
-
-	if (line == "\n" && !post) break;
-	if (line.indexOf("heatrequest") != -1 && post) break;
-    }
-}
-
-
 void loop() {
 
-    //wsServer.listen();
 
-    // listen for incoming clients
+    // Listen for incoming clients.
     EthernetClient client = server.available();
 
+    // If a client is found...
     if (client) {
-	//Serial.println("new client");
 
+	// If the client is availalble, read the incoming HTTP request.
 	if (client.available()) {
-	    readRequest(client);
-	    //Serial.println(httpResponse);
-	    //Serial.println();
 
+	    // Calls a function to read the HTTP request and stores it in the httpResponse global String.
+	    readRequest(client);
+
+	    // Displays the updated webpage in line with the request, and sends whatever commands the HTTP request asked to do.
 	    ClientResponse(client);
 	    httpResponse = "";
-	    //Serial.println("client disconnected");
+
 	    delay(1);
 	    client.stop();
 	}
     }
 }
 
+// Function to display entire webpage and process the HTTP request.
 void ClientResponse(EthernetClient client) {
-    // Send http request start
+
+    // Send http request.
     client.println("HTTP/1.1 200 OK");
     client.println("Content-Type: text/html");
     client.println("Connection: close");
@@ -143,50 +134,66 @@ void ClientResponse(EthernetClient client) {
     client.println("<head>");
     client.println("<title>REMS CONTROL CENTRE</title>");
 
-    // Javascript portion
+    // Javascript portion. Props to chatgpt because I don't know anything about JavaScript.
     client.println("<script>");
+
+    // Create a function tentatively called "DoStuff".
     client.println("function DoStuff() {");
+
+    // Creates a variable to store the HTTP request that we're going to send.
     client.println("  var xhr = new XMLHttpRequest();");
+
+    // Sends a post request and redirects to '/' (which is just the homepage).
     client.println("  xhr.open('POST', '/', true);");
     client.println("  xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');");
+
+    // Variables to store what the user wants to do with heat, cooling, and power (keep them on or off).
     client.println("  var heatState = document.getElementById('heatState').checked ? 1 : 0;");
     client.println("  var coolState = document.getElementById('coolState').checked ? 1 : 0;");
     client.println("  var powerOff = document.getElementById('powerOff').checked ? 1 : 0;");
+
+    // Send all the user requests back to the Arduino.
     client.println("  xhr.send('heatrequest=' + heatState + '&coolrequest=' + coolState + '&powerOff=' + powerOff);");
     client.println("}");
     client.println("</script>");
     client.println("</head>");
 
+    // Start body portion of site. Header that has site label.
     client.println("<body>");
     client.println("<h1>REMS Control Centre</h1>");
 
+    // Create a checkbox for the heating.
     client.println("<label for='heatState'>Heat Request</label>");
     client.println("<input type='checkbox' id='heatState'>");
 
+    // Create a checkbox for the cooling.
     client.println("<label for='coolState'>Cool Request</label>");
     client.println("<input type='checkbox' id='coolState'>");
 
+    // Create a checkbox for the power (doesn't work will implement eventually).
     client.println("<label for='powerOff'>Power Off</label>");
     client.println("<input type='checkbox' id='powerOff'>");
 
+    // Button that submits the state of the checkboxes and calls the JavaScript function to send the state of the buttons to the Arduino.
     client.println("<button onclick='DoStuff()'><h4>Do Stuff</h4></button>");
     client.println("</body>");
 
     client.println("</html>");
 
 
-    // HEAT LOGIC
+    // If the user wants the heating on, print that request to the Serial monitor.
     if (searchResponse(httpResponse, "heatrequest")) {
 	digitalWrite(HEATREQUEST, LOW);
 	Serial.println("  HEAT ON  ");
     }
+
+    // If the user doesn't want the heating on, print that to the serial monitor.
     else {
 	digitalWrite(HEATREQUEST, HIGH);
 	Serial.println("  HEAT OFF  ");
     }
 
-
-    // COOL LOGIC
+    // Same as heating but cooling instead.
     if (searchResponse(httpResponse, "coolrequest")) {
 	digitalWrite(COOLREQUEST, LOW);
 	Serial.println("  COOL ON  ");
@@ -196,13 +203,14 @@ void ClientResponse(EthernetClient client) {
 	Serial.println("  COOL OFF  ");
     }
 
-    // POWER SHUT OFF LOGIC
+    // No clue.
     if (searchResponse(httpResponse, "powerOff")) {
 	digitalWrite(POWERSHUTOFF, LOW);
     }	    
     else digitalWrite(POWERSHUTOFF, HIGH);
 
     // SMOKE ALARM LOGIC
+    // Doesn't work yet.
     if (digitalRead(SMOKEALARM)) {
 	client.println("<p>Smoke Alarm received from REMS006</p>");
     }
@@ -214,6 +222,34 @@ boolean searchResponse(String data, String key) {
     return data.charAt(index) == '1';
 }
 
+//  Function that reads the incoming HTTP request.
+void readRequest(EthernetClient client) {
+
+    // Boolean variable to store if the request is POST (sending states of buttons).
+    boolean post = false;
+    httpResponse = "";
+
+    // Read the string until the carnage return.
+    String line = client.readStringUntil('\r');
+
+    // Set POST to true if it is.
+    if (line.indexOf("POST") != -1) {
+	post = true;
+    }
+
+    // Iterate through all the strings until the newline appears (in the case of a GET request) or until the line with all the checkbox statuses appears (in the case of a POST request).
+    while (client.connected()) {
+	String line = client.readStringUntil('\r');
+	httpResponse += line;
+
+	if (line == "\n" && !post) break;
+	if (line.indexOf("heatrequest") != -1 && post) break;
+    }
+}
+
+
+
+// Old version in which I was using GET requests instead of POST. Holds sentimental value since I spent so long figuring it out so I'm hesitant to delete :( (but will do so eventually).
 /*
 void ClientResponse(EthernetClient client) {
     // HTTP sent
