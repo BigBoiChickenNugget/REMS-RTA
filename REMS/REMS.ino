@@ -70,6 +70,8 @@ void setup() {
     // Setup all pins.
     pinMode(HEATREQUEST, OUTPUT);
     pinMode(COOLREQUEST, OUTPUT);
+    digitalWrite(HEATREQUEST, HIGH);
+    digitalWrite(COOLREQUEST, HIGH);
 
     pinMode(SOUNDSENSOR1, INPUT);
     pinMode(SOUNDSENSOR2, INPUT);
@@ -84,7 +86,10 @@ void setup() {
     pinMode(SMOKEALARM, INPUT);
 
     pinMode(POWERSHUTOFF, OUTPUT);
-    digitalWrite(POWERSHUTOFF, LOW);
+    digitalWrite(POWERSHUTOFF, HIGH);
+
+    pinMode(WATERSHUTOFF, OUTPUT);
+    digitalWrite(WATERSHUTOFF, HIGH);
 
     // Start temperature sensors.
     sensor_1.begin();
@@ -151,9 +156,10 @@ void ClientResponse(EthernetClient client) {
     client.println("  var heatState = document.getElementById('heatState').checked ? 1 : 0;");
     client.println("  var coolState = document.getElementById('coolState').checked ? 1 : 0;");
     client.println("  var powerOff = document.getElementById('powerOff').checked ? 1 : 0;");
+    client.println("  var waterOff = document.getElementById('powerOff').checked ? 1 : 0;");
 
     // Send all the user requests back to the Arduino.
-    client.println("  xhr.send('heatrequest=' + heatState + '&coolrequest=' + coolState + '&powerOff=' + powerOff);");
+    client.println("  xhr.send('heatrequest=' + heatState + '&coolrequest=' + coolState + '&powerOff=' + powerOff + '&waterOff=' + waterOff);");
     client.println("}");
     client.println("</script>");
     client.println("</head>");
@@ -173,6 +179,10 @@ void ClientResponse(EthernetClient client) {
     // Create a checkbox for the power (doesn't work will implement eventually).
     client.println("<label for='powerOff'>Power Off</label>");
     client.println("<input type='checkbox' id='powerOff'>");
+
+    // Create a checkbox for the water shutoff (doesn't work will be implemented eventually).
+    client.println("<label for='waterOff'>Water Off</label>");
+    client.println("<input type='checkbox' id='waterOff'>");
 
     // Button that submits the state of the checkboxes and calls the JavaScript function to send the state of the buttons to the Arduino.
     client.println("<button onclick='DoStuff()'><h4>Do Stuff</h4></button>");
@@ -203,11 +213,19 @@ void ClientResponse(EthernetClient client) {
 	Serial.println("  COOL OFF  ");
     }
 
-    // No clue.
+    // To shutoff power and displays message on page.
     if (searchResponse(httpResponse, "powerOff")) {
 	digitalWrite(POWERSHUTOFF, LOW);
+	client.println("<p>Power shutoff from rems006</p>");
     }	    
     else digitalWrite(POWERSHUTOFF, HIGH);
+
+    // To shutoff water and displays message on page.
+    if (searchResponse(httpResponse, "waterOff")) {
+	digitalWrite(WATERSHUTOFF, LOW);
+	client.println("<p>Water shutoff from rems006</p>");
+    }	    
+    else digitalWrite(WATERSHUTOFF, HIGH);
 
     // SMOKE ALARM LOGIC
     // Doesn't work yet.
