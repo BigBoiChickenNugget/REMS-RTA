@@ -7,6 +7,10 @@ void setup() {
 	Serial.begin(9600);
 	pinMode(HEAT, OUTPUT);
 	pinMode(COOL, OUTPUT);
+
+	// Keep them off by default. The pin pushes low voltage and the relay flips it around so they turn on when the program starts.
+	digitalWrite(HEAT, HIGH);
+	digitalWrite(COOL, HIGH);
 }
 
 void loop() {
