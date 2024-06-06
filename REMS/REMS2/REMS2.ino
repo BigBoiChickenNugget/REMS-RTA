@@ -47,11 +47,11 @@ DallasTemperature sensor_3(&onewire_3);
 
 // Mac address of Arduino REMS board.
 byte mac[] = {
-    0x2C, 0xF7, 0xF1, 0x08, 0x33, 0x4E
+    0x2C, 0xF7, 0xF1, 0x08, 0x55, 0x4E
 };
 
 // IP address for the webpage.
-IPAddress ip(192, 168, 3, 160);
+IPAddress ip(192, 168, 3, 165);
 
 EthernetServer server(80);
 
@@ -137,7 +137,7 @@ void ClientResponse(EthernetClient client) {
 
     // Code for the head portion of the webpage
     client.println("<head>");
-    client.println("<title>REMS CONTROL CENTRE</title>");
+    client.println("<title>REMS CONTROL CENTRE 2</title>");
 
     // Javascript portion. Props to chatgpt because I don't know anything about JavaScript.
     client.println("<script>");
@@ -166,7 +166,8 @@ void ClientResponse(EthernetClient client) {
 
     // Start body portion of site. Header that has site label.
     client.println("<body>");
-    client.println("<h1>REMS Control Centre</h1>");
+    client.println("<h1>REMS006 2</h1>");
+    client.println("<h3>192.168.3.165</h3>");
 
     // Create a checkbox for the heating.
     client.println("<label for='heatState'>Heat Request</label>");
