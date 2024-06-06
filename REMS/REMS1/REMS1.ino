@@ -116,9 +116,12 @@ void loop() {
 	    ClientResponse(client);
 
 	    if (request) {
+		Serial.println("GOING THROUGH");
+		client.println("TESTING 1 2 3");
 		RTACommand(client);
 	    }
 	    else {
+		client.println("FIRST TEST");
 		Serial.println("  HEAT OFF  ");
 		Serial.println("  COOL OFF  ");
 	    }
@@ -169,7 +172,7 @@ void ClientResponse(EthernetClient client) {
     client.println("  var heatState = document.getElementById('heatState').checked ? 1 : 0;");
     client.println("  var coolState = document.getElementById('coolState').checked ? 1 : 0;");
     client.println("  var powerOff = document.getElementById('powerOff').checked ? 1 : 0;");
-    client.println("  var waterOff = document.getElementById('powerOff').checked ? 1 : 0;");
+    client.println("  var waterOff = document.getElementById('waterOff').checked ? 1 : 0;");
 
     // Send all the user requests back to the Arduino.
     client.println("  xhr.send('heatrequest=' + heatState + '&coolrequest=' + coolState + '&powerOff=' + powerOff + '&waterOff=' + waterOff);");
@@ -207,6 +210,7 @@ void ClientResponse(EthernetClient client) {
 
 void RTACommand(EthernetClient client) {
 
+    client.println("TEST TEST TEST TEST");
     // If the user wants the heating on, print that request to the Serial monitor.
     if (searchResponse(httpResponse, "heatrequest")) {
 	digitalWrite(HEATREQUEST, LOW);
@@ -230,6 +234,7 @@ void RTACommand(EthernetClient client) {
     }
 
     // To shutoff power and displays message on page.
+    client.println("<div style='position: relative; top: 10px;'>");
     if (searchResponse(httpResponse, "powerOff")) {
 	digitalWrite(POWERSHUTOFF, LOW);
 	Serial.println("POWER OFF");
@@ -250,6 +255,7 @@ void RTACommand(EthernetClient client) {
     if (digitalRead(SMOKEALARM)) {
 	client.println("<p>Smoke Alarm received from REMS006</p>");
     }
+    client.println("</div>");
 }
 
 // Searches the http response and checks what the state is of the current item I'm looking for.
