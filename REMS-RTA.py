@@ -15,7 +15,7 @@ RTA = serial.Serial("/dev/ttyUSB0", 9600);
 while True:
 
     # Read the incoming commands from the REMS serial monitor.
-    remsCommand = str(REMS.readline());
+    remsCommand = str(REMS1.readline());
 
     # If the user wants the heat to be on, print 'A' to the RTA serial monitor.
     if "HEAT ON" in remsCommand:

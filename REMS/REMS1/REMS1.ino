@@ -116,7 +116,7 @@ void loop() {
 	    ClientResponse(client);
 
 	    if (request) {
-		RTACommand();
+		RTACommand(client);
 	    }
 	    else {
 		Serial.println("  HEAT OFF  ");
@@ -205,7 +205,7 @@ void ClientResponse(EthernetClient client) {
 
 }
 
-void RTACommand() {
+void RTACommand(EthernetClient client) {
 
     // If the user wants the heating on, print that request to the Serial monitor.
     if (searchResponse(httpResponse, "heatrequest")) {
