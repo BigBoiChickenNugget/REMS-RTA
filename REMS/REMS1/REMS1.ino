@@ -110,10 +110,23 @@ void loop() {
 	if (client.available()) {
 
 	    // Calls a function to read the HTTP request and stores it in the httpResponse global String.
-	    readRequest(client);
+	    boolean request = readRequest(client);
 
 	    // Displays the updated webpage in line with the request, and sends whatever commands the HTTP request asked to do.
 	    ClientResponse(client);
+
+	    if (request) {
+		RTACommand();
+	    }
+	    else {
+		Serial.println("  HEAT OFF  ");
+		Serial.println("  COOL OFF  ");
+	    }
+
+	    // End html
+	    client.println("</body>");
+	    client.println("</html>");
+
 	    httpResponse = "";
 
 	    delay(1);
@@ -189,6 +202,11 @@ void ClientResponse(EthernetClient client) {
     client.println("<button onclick='DoStuff()'><h4>Do Stuff</h4></button>");
 
 
+
+}
+
+void RTACommand() {
+
     // If the user wants the heating on, print that request to the Serial monitor.
     if (searchResponse(httpResponse, "heatrequest")) {
 	digitalWrite(HEATREQUEST, LOW);
@@ -230,10 +248,6 @@ void ClientResponse(EthernetClient client) {
     if (digitalRead(SMOKEALARM)) {
 	client.println("<p>Smoke Alarm received from REMS006</p>");
     }
-
-    // End html
-    client.println("</body>");
-    client.println("</html>");
 }
 
 // Searches the http response and checks what the state is of the current item I'm looking for.
@@ -243,7 +257,7 @@ boolean searchResponse(String data, String key) {
 }
 
 //  Function that reads the incoming HTTP request.
-void readRequest(EthernetClient client) {
+boolean readRequest(EthernetClient client) {
 
     // Boolean variable to store if the request is POST (sending states of buttons).
     boolean post = false;
@@ -262,8 +276,8 @@ void readRequest(EthernetClient client) {
 	String line = client.readStringUntil('\r');
 	httpResponse += line;
 
-	if (line == "\n" && !post) break;
-	if (line.indexOf("heatrequest") != -1 && post) break;
+	if (line == "\n" && !post) return false;
+	if (line.indexOf("heatrequest") != -1 && post) return true;
     }
 }
 
