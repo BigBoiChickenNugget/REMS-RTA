@@ -232,6 +232,7 @@ void RTACommand(EthernetClient client) {
     // To shutoff power and displays message on page.
     if (searchResponse(httpResponse, "powerOff")) {
 	digitalWrite(POWERSHUTOFF, LOW);
+	Serial.println("POWER OFF");
 	client.println("<p>Power shutoff from rems006</p>");
     }	    
     else digitalWrite(POWERSHUTOFF, HIGH);
@@ -239,6 +240,7 @@ void RTACommand(EthernetClient client) {
     // To shutoff water and displays message on page.
     if (searchResponse(httpResponse, "waterOff")) {
 	digitalWrite(WATERSHUTOFF, LOW);
+	Serial.println("WATER OFF");
 	client.println("<p>Water shutoff from rems006</p>");
     }	    
     else digitalWrite(WATERSHUTOFF, HIGH);
