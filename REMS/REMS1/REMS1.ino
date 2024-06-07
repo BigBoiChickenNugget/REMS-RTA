@@ -176,6 +176,13 @@ void ClientResponse(EthernetClient client) {
 
     // Send all the user requests back to the Arduino.
     client.println("  xhr.send('heatrequest=' + heatState + '&coolrequest=' + coolState + '&powerOff=' + powerOff + '&waterOff=' + waterOff);");
+
+    client.println("  if (powerOff == 1) {");
+    client.println("    document.getElementById('powerOff').innerHTML = 'Power Off';");
+    client.println("  }");
+    client.println("  if (waterOff == 1) {");
+    client.println("    document.getElementById('waterOff').innerHTML = 'Water Off';");
+    client.println("  }");
     client.println("}");
     client.println("</script>");
     client.println("</head>");
