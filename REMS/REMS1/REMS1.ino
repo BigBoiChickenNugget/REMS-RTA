@@ -162,11 +162,11 @@ void ClientResponse(EthernetClient client) {
     client.println("function DoStuff() {");
 
     // Creates a variable to store the HTTP request that we're going to send.
-    client.println("  var states = new XMLHttpRequest();");
+    client.println("  var xhr = new XMLHttpRequest();");
 
     // Sends a post request and redirects to '/' (which is just the homepage).
-    client.println("  states.open('POST', '/', true);");
-    client.println("  states.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');");
+    client.println("  xhr.open('POST', '/', true);");
+    client.println("  xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');");
 
     // Variables to store what the user wants to do with heat, cooling, and power (keep them on or off).
     client.println("  var heatState = document.getElementById('heatState').checked ? 1 : 0;");
@@ -175,8 +175,15 @@ void ClientResponse(EthernetClient client) {
     client.println("  var waterOff = document.getElementById('waterOff').checked ? 1 : 0;");
 
     // Send all the user requests back to the Arduino.
-    client.println("  states.send('heatrequest=' + heatState + '&coolrequest=' + coolState + '&powerOff=' + powerOff + '&waterOff=' + waterOff);");
+    client.println("  xhr.send('heatrequest=' + heatState + '&coolrequest=' + coolState + '&powerOff=' + powerOff + '&waterOff=' + waterOff);");
 
+    client.println("  if (powerOff == 1) {");
+    client.println("    document.getElementById('powerOff').innerHTML = 'Power Off';");
+    client.println("  }");
+    client.println("  if (waterOff == 1) {");
+    client.println("    document.getElementById('waterOff').innerHTML = 'Water Off';");
+    client.println("  }");
+    client.println("}");
     client.println("</script>");
     client.println("</head>");
 
@@ -203,6 +210,7 @@ void ClientResponse(EthernetClient client) {
 
     // Button that submits the state of the checkboxes and calls the JavaScript function to send the state of the buttons to the Arduino.
     client.println("<button onclick='DoStuff()'><h4>Do Stuff</h4></button>");
+
 
 
 }
@@ -237,6 +245,7 @@ void RTACommand(EthernetClient client) {
     if (searchResponse(httpResponse, "powerOff")) {
 	digitalWrite(POWERSHUTOFF, LOW);
 	Serial.println("POWER OFF");
+	client.println("<p>Power shutoff from rems006</p>");
     }	    
     else digitalWrite(POWERSHUTOFF, HIGH);
 
@@ -244,12 +253,9 @@ void RTACommand(EthernetClient client) {
     if (searchResponse(httpResponse, "waterOff")) {
 	digitalWrite(WATERSHUTOFF, LOW);
 	Serial.println("WATER OFF");
+	client.println("<p>Water shutoff from rems006</p>");
     }	    
     else digitalWrite(WATERSHUTOFF, HIGH);
-
-    // Display the status of the power and water shutoff on the webpage.
-    client.println("<p id='powerOff' style='display: none;'>Power Shut Off</p>");
-    client.println("<p id='waterOff' style='display: none;'>Water Shut Off</p>");
 
     // SMOKE ALARM LOGIC
     // Doesn't work yet.

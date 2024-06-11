@@ -66,7 +66,6 @@ void setup() {
     // Start webserver.
     Ethernet.begin(mac, ip);
     server.begin();
-    Serial.println("START REMS2");
 
     // Setup all pins.
     pinMode(HEATREQUEST, OUTPUT);
