@@ -174,19 +174,6 @@ void ClientResponse(EthernetClient client) {
     client.println("  var powerOff = document.getElementById('powerOff').checked ? 1 : 0;");
     client.println("  var waterOff = document.getElementById('waterOff').checked ? 1 : 0;");
 
-    client.println("  if (powerOff == 1) {");
-    client.println("      document.getElementById('powerOff').style.display = 'block';");
-    client.println("  }");
-    client.println("  if (powerOff == 0) {");
-    client.println("      document.getElementById('powerOff').style.display = 'none';");
-    client.println("  }");
-    client.println("  if (waterOff == 1) {");
-    client.println("      document.getElementById('waterOff').style.display = 'block';");
-    client.println("  }");
-    client.println("  if (waterOff == 0) {");
-    client.println("      document.getElementById('waterOff').style.display = 'none';");
-    client.println("  }");
-
     // Send all the user requests back to the Arduino.
     client.println("  states.send('heatrequest=' + heatState + '&coolrequest=' + coolState + '&powerOff=' + powerOff + '&waterOff=' + waterOff);");
 
