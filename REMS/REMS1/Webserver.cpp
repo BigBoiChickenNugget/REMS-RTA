@@ -1,6 +1,12 @@
 #include "Arduino.h"
 #include "Webserver.h"
 
+void ClientResponse(EthernetClient client);
+void RTACommand(EthernetClient client);
+void searchResponse(String response, String key);
+boolean searchResponse(String response, String key);
+
+
 void ClientResponse(EthernetClient client) {
     // Send http request.
     client.println("HTTP/1.1 200 OK");
