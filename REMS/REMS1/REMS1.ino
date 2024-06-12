@@ -58,6 +58,9 @@ EthernetServer server(80);
 // String that'll store the response from the webpage.
 String httpResponse;
 
+// Array to store status of buttons. Order is heat, cool, power, water.
+boolean status[] = {false, false, false, false};
+
 void setup() {
 
     // Begin serial monitor.
@@ -110,27 +113,10 @@ void loop() {
 	if (client.available()) {
 
 	    // Calls a function to read the HTTP request and stores it in the httpResponse global String.
-	    boolean request = readRequest(client);
+	    readRequest(client);
 
 	    // Displays the updated webpage in line with the request, and sends whatever commands the HTTP request asked to do.
 	    ClientResponse(client);
-
-	    if (request) {
-		Serial.println("GOING THROUGH");
-		client.println("TESTING 1 2 3");
-		RTACommand(client);
-	    }
-	    else {
-		client.println("FIRST TEST");
-		Serial.println("  HEAT OFF  ");
-		Serial.println("  COOL OFF  ");
-	    }
-
-	    // End html
-	    client.println("</body>");
-	    client.println("</html>");
-
-	    httpResponse = "";
 
 	    delay(1);
 	    client.stop();
@@ -156,6 +142,7 @@ void ClientResponse(EthernetClient client) {
     client.println("<title>REMS CONTROL CENTRE 1</title>");
 
     // Javascript portion. Props to chatgpt because I don't know anything about JavaScript.
+    /*
     client.println("<script>");
 
     // Create a function tentatively called "DoStuff".
@@ -165,7 +152,7 @@ void ClientResponse(EthernetClient client) {
     client.println("  var xhr = new XMLHttpRequest();");
 
     // Sends a post request and redirects to '/' (which is just the homepage).
-    client.println("  xhr.open('POST', '/', true);");
+    client.println("  xhr.open('GET', '/', true);");
     client.println("  xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');");
 
     // Variables to store what the user wants to do with heat, cooling, and power (keep them on or off).
@@ -185,6 +172,8 @@ void ClientResponse(EthernetClient client) {
     client.println("  }");
     client.println("}");
     client.println("</script>");
+    */
+
     client.println("</head>");
 
     // Start body portion of site. Header that has site label.
@@ -192,28 +181,77 @@ void ClientResponse(EthernetClient client) {
     client.println("<h1>REMS006 1</h1>");
     client.println("<h4>192.168.3.160</h4>");
 
-    // Create a checkbox for the heating.
-    client.println("<label for='heatState'>Heat Request</label>");
-    client.println("<input type='checkbox' id='heatState'>");
+    client.println("<a href=" + query(0) + "><button>HEAT</button></a>");
+    client.println("<a href=" + query(1) + "><button>COOL</button></a>");
+    client.println("<a href=" + query(2) + "><button>POWER OFF</button></a>");
+    client.println("<a href=" + query(3) + "><button>WATER OFF</button></a>");
 
-    // Create a checkbox for the cooling.
-    client.println("<label for='coolState'>Cool Request</label>");
-    client.println("<input type='checkbox' id='coolState'>");
+    // End body and HTML.
+    client.println("</body></html>");
 
-    // Create a checkbox for the power (doesn't work will implement eventually).
-    client.println("<label for='powerOff'>Power Off</label>");
-    client.println("<input type='checkbox' id='powerOff'>");
+    if (status[0]) {
+	digitalWrite(HEATREQUEST, LOW);
+	Serial.println("HEAT ON");
+    }
 
-    // Create a checkbox for the water shutoff (doesn't work will be implemented eventually).
-    client.println("<label for='waterOff'>Water Off</label>");
-    client.println("<input type='checkbox' id='waterOff'>");
+    else {
+	digitalWrite(HEATREQUEST, HIGH);
+	Serial.println("HEAT OFF");
+    }
 
-    // Button that submits the state of the checkboxes and calls the JavaScript function to send the state of the buttons to the Arduino.
-    client.println("<button onclick='DoStuff()'><h4>Do Stuff</h4></button>");
+    if (status[1]) {
+	digitalWrite(COOLREQUEST, LOW);
+	Serial.println("COOL ON");
+    }
 
+    else {
+	digitalWrite(COOLREQUEST, HIGH);
+	Serial.println("COOL OFF");
+    }
 
+    if (status[2]) {
+	digitalWrite(POWERSHUTOFF, LOW);
+    }
+
+    else {
+	digitalWrite(POWERSHUTOFF, HIGH);
+    }
+
+    if (status[3]) {
+	digitalWrite(WATERSHUTOFF, LOW);
+    }
+
+    else {
+	digitalWrite(WATERSHUTOFF, HIGH);
+    }
 
 }
+
+//  Function that reads the incoming HTTP request.
+void readRequest(EthernetClient client) {
+
+    // Boolean variable to store if the request is POST (sending states of buttons).
+    boolean post = false;
+    httpResponse = "";
+
+    // Read the string until the carnage return.
+    String line = client.readStringUntil('\r');
+
+    // Iterate through all the strings until the newline appears (in the case of a GET request) or until the line with all the checkbox statuses appears (in the case of a POST request).
+    while (client.connected()) {
+	String line = client.readStringUntil('\r');
+	httpResponse += line;
+
+	if (line == "\n") break;
+    }
+}
+
+void query(int index) {
+    status[index] = !status[index];
+    return "?heatrequest=" + status[0] + "&coolrequest=" + status[1] + "&powerOff=" + status[2] + "&waterOff=" + status[3];
+}
+
+/*
 
 void RTACommand(EthernetClient client) {
 
@@ -295,6 +333,8 @@ boolean readRequest(EthernetClient client) {
 	if (line.indexOf("heatrequest") != -1 && post) return true;
     }
 }
+
+*/
 
 
 
