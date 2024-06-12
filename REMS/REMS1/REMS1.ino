@@ -187,7 +187,6 @@ void ClientResponse(EthernetClient client) {
     client.println("<a href=" + query(3) + "><button>WATER OFF</button></a>");
 
     // End body and HTML.
-    client.println("</body></html>");
 
     if (status[0]) {
 	digitalWrite(HEATREQUEST, LOW);
@@ -211,6 +210,7 @@ void ClientResponse(EthernetClient client) {
 
     if (status[2]) {
 	digitalWrite(POWERSHUTOFF, LOW);
+	client.println("POWER OFF");
     }
 
     else {
@@ -219,19 +219,19 @@ void ClientResponse(EthernetClient client) {
 
     if (status[3]) {
 	digitalWrite(WATERSHUTOFF, LOW);
+	client.println("WATER OFF");
     }
 
     else {
 	digitalWrite(WATERSHUTOFF, HIGH);
     }
-
+    client.println("</body></html>");
 }
 
 //  Function that reads the incoming HTTP request.
 void readRequest(EthernetClient client) {
 
     // Boolean variable to store if the request is POST (sending states of buttons).
-    boolean post = false;
     httpResponse = "";
 
     // Read the string until the carnage return.
@@ -246,9 +246,9 @@ void readRequest(EthernetClient client) {
     }
 }
 
-void query(int index) {
+String query(int index) {
     status[index] = !status[index];
-    return "?heatrequest=" + status[0] + "&coolrequest=" + status[1] + "&powerOff=" + status[2] + "&waterOff=" + status[3];
+    return "?heatrequest=" + String(status[0]) + "&coolrequest=" + String(status[1]) + "&powerOff=" + String(status[2]) + "&waterOff=" + String(status[3]);
 }
 
 /*
