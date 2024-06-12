@@ -6,7 +6,7 @@
 #define WEBSERVER_H
 
 #include <Ethernet.h>
-#include "Arduino.h"
+#include <Arduino.h>
 
 // Pins for making heating and cooling requests.
 #define HEATREQUEST 31
@@ -39,18 +39,9 @@
 #define ONE_WIRE_BUS_2 39
 #define ONE_WIRE_BUS_3 41
 
-class Webserver
-{
-    public:
-	Webserver();
-	void ClientResponse(EthernetClient client);
-	void RTACommand(EthernetClient client);
-	boolean searchResponse(String data, String key);
-	boolean readRequest(EthernetClient client);
-    private:
-	EthernetClient _client;
-	String _data;
-	String _key;
-}
+void ClientResponse(EthernetClient client);
+void RTACommand(EthernetClient client);
+boolean searchResponse(String data, String key);
+boolean readRequest(EthernetClient client);
 
 #endif
