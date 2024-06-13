@@ -4,12 +4,12 @@ import serial
 # Ports on which the REMS and RTA Arduinos are.
 rems1Port = "/dev/ttyACM0"
 #rems2Port = "/dev/ttyACM1"
-rtaPort = "/dev/ttyUSB0"
+rtaPort = "/dev/ttyUSB1"
 
 # Open a serial connection with the RTA and REMS.
 REMS1 = serial.Serial("/dev/ttyACM0", 9600);
 #REMS2 = serial.Serial("/dev/ttyACM1", 9600);
-RTA = serial.Serial("/dev/ttyUSB0", 9600);
+RTA = serial.Serial("/dev/ttyUSB1", 9600);
 
 # Keep running.
 while True:

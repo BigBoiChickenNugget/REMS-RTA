@@ -57,6 +57,7 @@ EthernetServer server(80);
 
 // String that'll store the response from the webpage.
 String httpResponse;
+boolean changed = 0;
 
 // Array to store status of buttons. Order is heat, cool, power, water.
 boolean status[] = {false, false, false, false};
@@ -112,9 +113,6 @@ void loop() {
 	// If the client is availalble, read the incoming HTTP request.
 	if (client.available()) {
 
-	    // Calls a function to read the HTTP request and stores it in the httpResponse global String.
-	    readRequest(client);
-
 	    // Displays the updated webpage in line with the request, and sends whatever commands the HTTP request asked to do.
 	    ClientResponse(client);
 
@@ -142,9 +140,16 @@ void ClientResponse(EthernetClient client) {
     client.println("<title>REMS CONTROL CENTRE 1</title>");
 
     // Javascript portion. Props to chatgpt because I don't know anything about JavaScript.
-    /*
     client.println("<script>");
 
+    /*
+    client.println("function ChangeState(index) {");
+    client.println("  var xhr = new XMLHttpRequest();");
+    client.println("  xhr.send('GET', '/?' + index);");
+    client.println("}");
+    */
+
+    /*
     // Create a function tentatively called "DoStuff".
     client.println("function DoStuff() {");
 
@@ -171,8 +176,8 @@ void ClientResponse(EthernetClient client) {
     client.println("    document.getElementById('waterOff').innerHTML = 'Water Off';");
     client.println("  }");
     client.println("}");
-    client.println("</script>");
     */
+    client.println("</script>");
 
     client.println("</head>");
 
@@ -181,13 +186,22 @@ void ClientResponse(EthernetClient client) {
     client.println("<h1>REMS006 1</h1>");
     client.println("<h4>192.168.3.160</h4>");
 
+    /*
     client.println("<a href=" + query(0) + "><button>HEAT</button></a>");
     client.println("<a href=" + query(1) + "><button>COOL</button></a>");
     client.println("<a href=" + query(2) + "><button>POWER OFF</button></a>");
     client.println("<a href=" + query(3) + "><button>WATER OFF</button></a>");
+    */
+    client.println("<a href='/?heatrequest'><button>HEAT</button></a>");
+    client.println("<a href='/?coolrequest'><button>COOL</button></a>");
+    client.println("<a href='/?powerOff'><button>POWER OFF</button></a>");
+    client.println("<a href='/?waterOff'><button>WATER OFF</button></a>");
+
+    // Calls a function to read the HTTP request and stores it in the httpResponse global String.
+    readRequest(client);
+
 
     // End body and HTML.
-
     if (status[0]) {
 	digitalWrite(HEATREQUEST, LOW);
 	Serial.println("HEAT ON");
@@ -244,14 +258,31 @@ void readRequest(EthernetClient client) {
 
 	if (line == "\n") break;
     }
-}
+    Serial.println(httpResponse);
 
-String query(int index) {
-    status[index] = !status[index];
-    return "?heatrequest=" + String(status[0]) + "&coolrequest=" + String(status[1]) + "&powerOff=" + String(status[2]) + "&waterOff=" + String(status[3]);
+    if (httpResponse.indexOf("?heatrequest") >= 0) {
+	status[0] = !status[0];
+    }
+    if (httpResponse.indexOf("?coolrequest") >= 0) {
+	status[1] = !status[1];
+    }
+    if (httpResponse.indexOf("?powerOff") >= 0) {
+	status[2] = !status[2];
+    }
+    if (httpResponse.indexOf("?waterOff") >= 0) {
+	status[3] = !status[3];
+    }
 }
 
 /*
+String query(int index) {
+    status[index] = !status[index];
+    Serial.println("STATUS: " + String(status[0]) + " " + String(status[1]) + " " + String(status[2]) + " " + String(status[3]));
+    changed = 1;
+
+    return "?heatrequest=" + String(status[0]) + "&coolrequest=" + String(status[1]) + "&powerOff=" + String(status[2]) + "&waterOff=" + String(status[3]);
+}
+
 
 void RTACommand(EthernetClient client) {
 
