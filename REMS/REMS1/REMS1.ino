@@ -225,19 +225,23 @@ void ClientResponse(EthernetClient client) {
     if (status[2]) {
 	digitalWrite(POWERSHUTOFF, LOW);
 	client.println("POWER OFF");
+	Serial.println("POWER OFF");
     }
 
     else {
 	digitalWrite(POWERSHUTOFF, HIGH);
+	Serial.println("POWER ON");
     }
 
     if (status[3]) {
 	digitalWrite(WATERSHUTOFF, LOW);
 	client.println("WATER OFF");
+	Serial.println("WATER OFF");
     }
 
     else {
 	digitalWrite(WATERSHUTOFF, HIGH);
+	Serial.println("WATER ON");
     }
     client.println("</body></html>");
 }
@@ -248,28 +252,29 @@ void readRequest(EthernetClient client) {
     // Boolean variable to store if the request is POST (sending states of buttons).
     httpResponse = "";
 
-    // Read the string until the carnage return.
-    String line = client.readStringUntil('\r');
+    char c = client.read();
 
     // Iterate through all the strings until the newline appears (in the case of a GET request) or until the line with all the checkbox statuses appears (in the case of a POST request).
-    while (client.connected()) {
-	String line = client.readStringUntil('\r');
-	httpResponse += line;
-
-	if (line == "\n") break;
+    while (c != '\n') {
+	httpResponse += c;
+	c = client.read();
     }
     Serial.println(httpResponse);
 
     if (httpResponse.indexOf("?heatrequest") >= 0) {
+	Serial.println("HEAT SWAP");
 	status[0] = !status[0];
     }
     if (httpResponse.indexOf("?coolrequest") >= 0) {
+	Serial.println("COOl SWAP");
 	status[1] = !status[1];
     }
     if (httpResponse.indexOf("?powerOff") >= 0) {
+	Serial.println("POWER SWAP");
 	status[2] = !status[2];
     }
     if (httpResponse.indexOf("?waterOff") >= 0) {
+	Serial.println("WATER SWAP");
 	status[3] = !status[3];
     }
 }
