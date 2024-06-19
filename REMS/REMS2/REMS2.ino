@@ -58,6 +58,9 @@ EthernetServer server(80);
 // String that'll store the response from the webpage.
 String httpResponse;
 
+// Array to store status of buttons. Order is heat, cool, power, water.
+boolean status[] = {false, false, false, false};
+
 void setup() {
 
     // Begin serial monitor.
@@ -114,7 +117,6 @@ void loop() {
 
 	    // Displays the updated webpage in line with the request, and sends whatever commands the HTTP request asked to do.
 	    ClientResponse(client);
-	    httpResponse = "";
 
 	    delay(1);
 	    client.stop();
@@ -137,284 +139,102 @@ void ClientResponse(EthernetClient client) {
 
     // Code for the head portion of the webpage
     client.println("<head>");
-    client.println("<title>REMS CONTROL CENTRE 2</title>");
+    client.println("<title>REMS CONTROL CENTRE 1</title>");
 
-    // Javascript portion. Props to chatgpt because I don't know anything about JavaScript.
-    client.println("<script>");
-
-    // Create a function tentatively called "DoStuff".
-    client.println("function DoStuff() {");
-
-    // Creates a variable to store the HTTP request that we're going to send.
-    client.println("  var xhr = new XMLHttpRequest();");
-
-    // Sends a post request and redirects to '/' (which is just the homepage).
-    client.println("  xhr.open('POST', '/', true);");
-    client.println("  xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');");
-
-    // Variables to store what the user wants to do with heat, cooling, and power (keep them on or off).
-    client.println("  var heatState = document.getElementById('heatState').checked ? 1 : 0;");
-    client.println("  var coolState = document.getElementById('coolState').checked ? 1 : 0;");
-    client.println("  var powerOff = document.getElementById('powerOff').checked ? 1 : 0;");
-    client.println("  var waterOff = document.getElementById('powerOff').checked ? 1 : 0;");
-
-    // Send all the user requests back to the Arduino.
-    client.println("  xhr.send('heatrequest=' + heatState + '&coolrequest=' + coolState + '&powerOff=' + powerOff + '&waterOff=' + waterOff);");
-    client.println("}");
-    client.println("</script>");
     client.println("</head>");
 
     // Start body portion of site. Header that has site label.
     client.println("<body>");
-    client.println("<h1>REMS006 2</h1>");
-    client.println("<h3>192.168.3.165</h3>");
+    client.println("<h1>REMS006 1</h1>");
+    client.println("<h4>192.168.3.160</h4>");
 
-    // Create a checkbox for the heating.
-    client.println("<label for='heatState'>Heat Request</label>");
-    client.println("<input type='checkbox' id='heatState'>");
-
-    // Create a checkbox for the cooling.
-    client.println("<label for='coolState'>Cool Request</label>");
-    client.println("<input type='checkbox' id='coolState'>");
-
-    // Create a checkbox for the power (doesn't work will implement eventually).
-    client.println("<label for='powerOff'>Power Off</label>");
-    client.println("<input type='checkbox' id='powerOff'>");
-
-    // Create a checkbox for the water shutoff (doesn't work will be implemented eventually).
-    client.println("<label for='waterOff'>Water Off</label>");
-    client.println("<input type='checkbox' id='waterOff'>");
-
-    // Button that submits the state of the checkboxes and calls the JavaScript function to send the state of the buttons to the Arduino.
-    client.println("<button onclick='DoStuff()'><h4>Do Stuff</h4></button>");
-
-
-    // If the user wants the heating on, print that request to the Serial monitor.
-    if (searchResponse(httpResponse, "heatrequest")) {
-	digitalWrite(HEATREQUEST, LOW);
-	Serial.println("  HEAT ON  ");
+    String heat, cool, power, water;
+    for (int i = 0; i < 4; i++) {
+	if (!status[i]) {
+	    if (i == 0) heat = "HEAT ON";
+	    if (i == 1) cool = "COOL ON";
+	    if (i == 2) power = "POWER OFF";
+	    if (i == 3) water = "WATER OFF";
+	}
+	else if (status[i]) {
+	    if (i == 0) heat = "HEAT OFF";
+	    if (i == 1) cool = "COOL OFF";
+	    if (i == 2) power = "POWER ON";
+	    if (i == 3) water = "WATER ON";
+	}
     }
 
-    // If the user doesn't want the heating on, print that to the serial monitor.
+    client.println("<a href='/?heatrequest'><button>" + heat + "</button></a>");
+    client.println("<a href='/?coolrequest'><button>" + cool + "</button></a>");
+    client.println("<a href='/?powerOff'><button>" + power + "</button></a>");
+    client.println("<a href='/?waterOff'><button>" + water + "</button></a>");
+
+
+    // End body and HTML.
+    if (status[0]) {
+	digitalWrite(HEATREQUEST, LOW);
+	Serial.println("HEAT ON");
+    }
+
     else {
 	digitalWrite(HEATREQUEST, HIGH);
-	Serial.println("  HEAT OFF  ");
+	Serial.println("HEAT OFF");
     }
 
-    // Same as heating but cooling instead.
-    if (searchResponse(httpResponse, "coolrequest")) {
+    if (status[1]) {
 	digitalWrite(COOLREQUEST, LOW);
-	Serial.println("  COOL ON  ");
+	Serial.println("COOL ON");
     }
+
     else {
 	digitalWrite(COOLREQUEST, HIGH);
-	Serial.println("  COOL OFF  ");
+	Serial.println("COOL OFF");
     }
 
-    // To shutoff power and displays message on page.
-    if (searchResponse(httpResponse, "powerOff")) {
+    if (status[2]) {
 	digitalWrite(POWERSHUTOFF, LOW);
-	client.println("<p>Power shutoff from rems006</p>");
-    }	    
-    else digitalWrite(POWERSHUTOFF, HIGH);
-
-    // To shutoff water and displays message on page.
-    if (searchResponse(httpResponse, "waterOff")) {
-	digitalWrite(WATERSHUTOFF, LOW);
-	client.println("<p>Water shutoff from rems006</p>");
-    }	    
-    else digitalWrite(WATERSHUTOFF, HIGH);
-
-    // SMOKE ALARM LOGIC
-    // Doesn't work yet.
-    if (digitalRead(SMOKEALARM)) {
-	client.println("<p>Smoke Alarm received from REMS006</p>");
+	client.println("POWER OFF");
     }
 
-    // End html
-    client.println("</body>");
-    client.println("</html>");
-}
+    else {
+	digitalWrite(POWERSHUTOFF, HIGH);
+    }
 
-// Searches the http response and checks what the state is of the current item I'm looking for.
-boolean searchResponse(String data, String key) {
-    int index = data.indexOf(key + "=") + key.length() + 1;
-    return data.charAt(index) == '1';
+    if (status[3]) {
+	digitalWrite(WATERSHUTOFF, LOW);
+	client.println("WATER OFF");
+    }
+
+    else {
+	digitalWrite(WATERSHUTOFF, HIGH);
+    }
+    client.println("</body></html>");
 }
 
 //  Function that reads the incoming HTTP request.
 void readRequest(EthernetClient client) {
 
     // Boolean variable to store if the request is POST (sending states of buttons).
-    boolean post = false;
     httpResponse = "";
 
-    // Read the string until the carnage return.
-    String line = client.readStringUntil('\r');
-
-    // Set POST to true if it is.
-    if (line.indexOf("POST") != -1) {
-	post = true;
-    }
+    char c = client.read();
 
     // Iterate through all the strings until the newline appears (in the case of a GET request) or until the line with all the checkbox statuses appears (in the case of a POST request).
-    while (client.connected()) {
-	String line = client.readStringUntil('\r');
-	httpResponse += line;
-
-	if (line == "\n" && !post) break;
-	if (line.indexOf("heatrequest") != -1 && post) break;
+    while (c != '\n') {
+	httpResponse += c;
+	c = client.read();
     }
-}
 
-
-
-// Old version in which I was using GET requests instead of POST. Holds sentimental value since I spent so long figuring it out so I'm hesitant to delete :( (but will do so eventually).
-/*
-void ClientResponse(EthernetClient client) {
-    // HTTP sent
-    client.println("HTTP/1.1 200 OK");
-    client.println("Content-Type: text/html");
-    client.println("Connection: close");
-
-    // Page refresh every 5 seconds
-    client.println("Refresh: 60");
-    client.println();
-
-    // Begin HTML
-    client.println("<!DOCTYPE HTML>");
-    client.println("<html>");
-
-    client.println("<head>");
-    client.println("<title>REMS CONTROL PAGE</title>");
-    
-    // Javascript
-    /*
-    client.println("<script>");
-    client.println("function HeatSensorValues() {");
-    client.println("	var xhttp = new XMLHttpRequest();");
-    client.println("	    if (this.readyState == 4 && this.status == 200) {");
-    client.println("		document.getElementById('heat1').innerHTML = this.responseText;");
-    client.println("	}");
-    client.println("}");
-    client.print("
-    client.println("</script>");
-
-    client.println("</head>");
-    client.println("<body>");
-
-    // Temperature Section
-    client.println("<div style='position: relative;'>");
-
-    // HEAT request section.
-    client.println("<a href='/?heatrequest''><button><h3>Send Heat Request</h3></button></a>");
-
-    // Checks for GET request in the HTTP response and sends a high heat request signal to the RTA.
     if (httpResponse.indexOf("?heatrequest") >= 0) {
-	digitalWrite(HEATREQUEST, LOW);
-	Serial.println("HEAAAT");
+	status[0] = !status[0];
     }
-    else digitalWrite(HEATREQUEST, HIGH);
-
-    // COOL request section.
-    client.println("<a href='/?coolrequest''><button><h3>Send Cool Request</h3></button></a>");
-
-    // Same thing as HEAT request but cool.
-    if (httpResponse.indexOf("?coolrequest") > 0) {
-	digitalWrite(COOLREQUEST, LOW);
-	Serial.println("COOOOOL");
+    if (httpResponse.indexOf("?coolrequest") >= 0) {
+	status[1] = !status[1];
     }
-    else digitalWrite(COOLREQUEST, HIGH);
-
-    // To stop both HEAT and COOL requests.
-    client.println("<a href='/?stoprequests''><button><h3>Stop Requests</h3></button></a>");
-
-    // Turns off the heat and cooling signals to the RTA.
-    if (httpResponse.indexOf("?stoprequests") >= 0) {
-	digitalWrite(COOLREQUEST, HIGH);
-	digitalWrite(HEATREQUEST, HIGH);
-	Serial.println("STTOOOOOPP");
+    if (httpResponse.indexOf("?powerOff") >= 0) {
+	status[2] = !status[2];
     }
-
-    // If either HEAT or COOLING is on, show the temperature from the pins.
-    if (httpResponse.indexOf("?coolrequest") >= 0|| httpResponse.indexOf("?heatrequest") >= 0) {
-	sensor_1.requestTemperatures();
-	client.println(sensor_1.getTempCByIndex(0));
-
-	sensor_2.requestTemperatures();
-	client.println(sensor_2.getTempCByIndex(0));
-
-	sensor_3.requestTemperatures();
-	client.println(sensor_3.getTempCByIndex(0));
+    if (httpResponse.indexOf("?waterOff") >= 0) {
+	status[3] = !status[3];
     }
-    client.println("</div>");
-
-    // Begin smoke alarm section.
-    client.println("<div style='position: relative; top: 20px'>");
-
-    // If D43 is HIGH, show that smoke alarm is on on W5500.
-    if (digitalRead(SMOKEALARM)) client.println("Smoke Alarm Received from REMS006");
-    client.println("</div>");
-
-    // Begin power shut off section.
-    client.println("<div style='position: relative; top: 2px'>");
-    client.println("<a href='/?powershutoff''><button><h2>Power Shut Off</h2></button></a>");
-
-    // If power shut off request, make the powershut off pin high and write "power shut off" on W5500.
-    if (httpResponse.indexOf("?powershutoff") >= 0) {
-	digitalWrite(POWERSHUTOFF, LOW);
-	client.println("Power shut off to REMS006");
-    }
-    else digitalWrite(POWERSHUTOFF, HIGH);
-    client.println("</div>");
-
-    // Water shut off section.
-    client.println("<div style='position: relative; top: 20px'>");
-    client.println("<a href='/?watershutoff''><button><h2>Water Shut Off</h2></button></a>");
-
-    if (httpResponse.indexOf("?watershutoff") >= 0) {
-	digitalWrite(WATERSHUTOFF, LOW);
-	client.println("Water shut off to REMS006");
-    }
-    else digitalWrite(WATERSHUTOFF, HIGH);
-    client.println("<div style='position: relative; top: 20px'>");
-
-    // Temporarily display the readings from the sound sensors.
-    client.println("<div style='position: relative; top: 50px'>");
-    if (digitalRead(SOUNDSENSOR1)) client.println("SOUND DETECTED (23)");
-	else client.println("NO SOUND (23)");
-    if (digitalRead(SOUNDSENSOR2)) client.println("SOUND DETECTED (25)");
-	else client.println("NO SOUND (25)");
-    if (digitalRead(SOUNDSENSOR3)) client.println("SOUND DETECTED (27)");
-	else client.println("NO SOUND (27)");
-    if (digitalRead(SOUNDSENSOR4)) client.println("SOUND DETECTED (29)");
-	else client.println("NO SOUND (29)");
-    client.println("</div>");
-
-    // Temporarily display the readings from the motion sensors.
-    client.println("<div style='position: relative; top: 50px'>");
-    if (digitalRead(MOTIONSENSOR1)) client.println("MOTION DETECTED (30)");
-	else client.println("NO MOTION (30)");
-    if (digitalRead(MOTIONSENSOR2)) client.println("MOTION DETECTED (32)");
-	else client.println("NO MOTION (32)");
-    if (digitalRead(MOTIONSENSOR3)) client.println("MOTION DETECTED (34)");
-	else client.println("NO MOTION (34)");
-    if (digitalRead(MOTIONSENSOR4)) client.println("MOTION DETECTED (36)");
-	else client.println("NO MOTION (36)");
-    client.println("</div>");
-
-    client.println("</body></html>");
 }
-
-float getTemp(int pin) {
-    OneWire oneWire(pin);
-
-    DallasTemperature sensors(&oneWire);
-
-    sensors.begin();
-
-    sensors.requestTemperatures();
-
-    return sensors.getTempCByIndex(0);
-}
-*/

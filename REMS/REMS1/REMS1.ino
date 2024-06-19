@@ -151,13 +151,13 @@ void ClientResponse(EthernetClient client) {
 
     String heat, cool, power, water;
     for (int i = 0; i < 4; i++) {
-	if (status[i]) {
+	if (!status[i]) {
 	    if (i == 0) heat = "HEAT ON";
 	    if (i == 1) cool = "COOL ON";
 	    if (i == 2) power = "POWER OFF";
 	    if (i == 3) water = "WATER OFF";
 	}
-	else {
+	else if (status[i]) {
 	    if (i == 0) heat = "HEAT OFF";
 	    if (i == 1) cool = "COOL OFF";
 	    if (i == 2) power = "POWER ON";
@@ -195,23 +195,19 @@ void ClientResponse(EthernetClient client) {
     if (status[2]) {
 	digitalWrite(POWERSHUTOFF, LOW);
 	client.println("POWER OFF");
-	Serial.println("POWER OFF");
     }
 
     else {
 	digitalWrite(POWERSHUTOFF, HIGH);
-	Serial.println("POWER ON");
     }
 
     if (status[3]) {
 	digitalWrite(WATERSHUTOFF, LOW);
 	client.println("WATER OFF");
-	Serial.println("WATER OFF");
     }
 
     else {
 	digitalWrite(WATERSHUTOFF, HIGH);
-	Serial.println("WATER ON");
     }
     client.println("</body></html>");
 }
@@ -229,22 +225,17 @@ void readRequest(EthernetClient client) {
 	httpResponse += c;
 	c = client.read();
     }
-    Serial.println(httpResponse);
 
     if (httpResponse.indexOf("?heatrequest") >= 0) {
-	Serial.println("HEAT SWAP");
 	status[0] = !status[0];
     }
     if (httpResponse.indexOf("?coolrequest") >= 0) {
-	Serial.println("COOl SWAP");
 	status[1] = !status[1];
     }
     if (httpResponse.indexOf("?powerOff") >= 0) {
-	Serial.println("POWER SWAP");
 	status[2] = !status[2];
     }
     if (httpResponse.indexOf("?waterOff") >= 0) {
-	Serial.println("WATER SWAP");
 	status[3] = !status[3];
     }
 }
