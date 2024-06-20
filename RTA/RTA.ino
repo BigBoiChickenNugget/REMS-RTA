@@ -25,21 +25,25 @@ void loop() {
 		// 'A' means lamp on.
 		if (command == 'A') {
 			digitalWrite(HEAT, LOW);
+			Serial.println("HEAT");
 		}
 
 		// 'B' means lamp off.
 		if (command == 'B') {
 			digitalWrite(HEAT, HIGH);
+			Serial.println("NO HEAT");
 		}
 
 		// 'C' means fan on.
 		if (command == 'C') {
 			digitalWrite(COOL, LOW);
+			Serial.println("COOL");
 		}
 
 		// 'D' means fan off.
 		if (command == 'D') {
 			digitalWrite(COOL, HIGH);
+			Serial.println("NO COOL");
 		}
 
 		// Uhh ignore for this for now.

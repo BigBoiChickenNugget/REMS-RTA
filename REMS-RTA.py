@@ -7,17 +7,17 @@ rems1Port = "/dev/ttyACM0"
 rtaPort = "/dev/ttyUSB1"
 
 # Open a serial connection with the RTA and REMS.
-REMS1 = serial.Serial("/dev/ttyACM0", 9600);
-REMS2 = serial.Serial("/dev/ttyACM1", 9600);
-RTA1 = serial.Serial("/dev/ttyUSB0", 9600);
-RTA2 = serial.Serial("/dev/ttyUSB1", 9600);
+#REMS1 = serial.Serial("/dev/ttyACM0", 9600)
+REMS2 = serial.Serial("/dev/ttyACM1", 9600)
+#RTA1 = serial.Serial("/dev/ttyUSB0", 9600)
+RTA2 = serial.Serial("/dev/ttyUSB1", 9600)
 
 # Keep running.
 while True:
 
     # Read the incoming commands from the REMS serial monitor.
-    rems1Command = str(REMS1.readline());
-    rems2Command = str(REMS2.readline());
+    rems1Command = "hello" #str(REMS1.readline())
+    rems2Command = str(REMS2.readline())
 
     # If the user wants the heat to be on, print 'A' to the RTA serial monitor.
     if "HEAT ON" in rems1Command:
