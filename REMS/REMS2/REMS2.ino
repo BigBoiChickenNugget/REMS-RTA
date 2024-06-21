@@ -139,14 +139,14 @@ void ClientResponse(EthernetClient client) {
 
     // Code for the head portion of the webpage
     client.println("<head>");
-    client.println("<title>REMS CONTROL CENTRE 1</title>");
+    client.println("<title>REMS CONTROL CENTRE 2</title>");
 
     client.println("</head>");
 
     // Start body portion of site. Header that has site label.
     client.println("<body>");
-    client.println("<h1>REMS006 1</h1>");
-    client.println("<h4>192.168.3.160</h4>");
+    client.println("<h1>REMS006 2</h1>");
+    client.println("<h4>192.168.3.165</h4>");
 
     String heat, cool, power, water;
     for (int i = 0; i < 4; i++) {

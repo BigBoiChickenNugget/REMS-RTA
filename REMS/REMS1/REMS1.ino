@@ -209,6 +209,19 @@ void ClientResponse(EthernetClient client) {
     else {
 	digitalWrite(WATERSHUTOFF, HIGH);
     }
+
+    // Temperature sensor readings.
+    tmp1 = sensor_1.requestTemperatures();
+    tmp2 = sensor_2.requestTemperatures();
+    tmp3 = sensor_3.requestTemperatures();
+
+    // Create temperature sensors small header but position it below the rest
+    client.println("<h4 style='position: relative; top: 5%;'>Temperature Sensors</h4>");
+    client.println("<p style='position: relative; top: 1%;'>Temperature Sensor 1: " + String(sensor_1.getTempCByIndex(0)) + " C</p>");
+    client.println("<p style='position: relative; top: 1%;'>Temperature Sensor 2: " + String(sensor_2.getTempCByIndex(0)) + " C</p>");
+    client.println("<p style='position: relative; top: 1%;'>Temperature Sensor 3: " + String(sensor_3.getTempCByIndex(0)) + " C</p>");
+
+
     client.println("</body></html>");
 }
 

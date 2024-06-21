@@ -2,11 +2,23 @@
 #define HEAT 8
 #define COOL 5
 
+// Pins for smoke and water.
+#define SMOKE 6
+#define WATERON 2
+#define POWER 12
+#define WATERLEAK 10
+
 // Start the serial monitor and configure the pins.
 void setup() {
 	Serial.begin(9600);
 	pinMode(HEAT, OUTPUT);
 	pinMode(COOL, OUTPUT);
+	pinMode(SMOKE, OUTPUT);
+	pinMode(WATERLEAK, OUTPUT);
+
+	pinMode(WATERON, INPUT);
+	pinMode(POWER, INPUT);
+
 
 	// Keep them off by default. The pin pushes low voltage and the relay flips it around so they turn on when the program starts.
 	digitalWrite(HEAT, HIGH);
@@ -45,17 +57,5 @@ void loop() {
 			digitalWrite(COOL, HIGH);
 			Serial.println("NO COOL");
 		}
-
-		// Uhh ignore for this for now.
-		/*switch(char(Serial.read())) {
-			case 'A':
-				digitalWrite(HEAT, LOW);
-			case 'B':
-				digitalWrite(HEAT, HIGH);
-			case 'C':
-				digitalWrite(COOL, LOW);
-			case 'D':
-				digitalWrite(COOL, HIGH);
-		}*/
 	}
 }
