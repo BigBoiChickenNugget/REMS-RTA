@@ -11,38 +11,38 @@
 #define MOTION4 30
 
 // DHT temperature sensors
-#define DHT22-1 28
-#define DHT22-2 26
-#define DHT11-1 24
-#define DHT11-2 22
+#define DHT22_1 28
+#define DHT22_2 26
+#define DHT11_1 24
+#define DHT11_2 22
 
 // DHT Sensor setup
 #include <DHT.h>
-DHT dht1(DHT22-1, DHT22);
-DHT dht2(DHT22-2, DHT22);
-DHT dht3(DHT11-1, DHT11);
-DHT dht4(DHT11-2, DHT11);
+DHT dht1(DHT22_1, DHT22);
+DHT dht2(DHT22_2, DHT22);
+DHT dht3(DHT11_1, DHT11);
+DHT dht4(DHT11_2, DHT11);
 
 // LM35DZ temperature sensors
-#define LM35DZ-1 A13
-#define LM35DZ-2 A14
-#define LM35DZ-3 A15
+#define LM35DZ_1 A13
+#define LM35DZ_2 A14
+#define LM35DZ_3 A15
 
 // DS18B20 temperature sensors
 #include <OneWire.h>
 #include <DallasTemperature.h>
-#define DS18B20-1 37
-#define DS18B20-2 39
-#define DS18B20-3 41
+#define DS18B20_1 37
+#define DS18B20_2 39
+#define DS18B20_3 41
 
 // DS18B20 setup
-OneWire oneWire(DS18B20-1);
+OneWire oneWire(DS18B20_1);
 DallasTemperature sensor1(&oneWire);
 
-OneWire oneWire(DS18B20-2);
+OneWire oneWire(DS18B20_2);
 DallasTemperature sensor2(&oneWire);
 
-OneWire oneWire(DS18B20-3);
+OneWire oneWire(DS18B20_3);
 DallasTemperature sensor3(&oneWire);
 
 
@@ -60,18 +60,18 @@ void setup() {
     pinMode(MOTION3, INPUT);
     pinMode(MOTION4, INPUT);
 
-    pinMode(DHT22-1, INPUT);
-    pinMode(DHT22-2, INPUT);
-    pinMode(DHT11-1, INPUT);
-    pinMode(DHT11-2, INPUT);
+    pinMode(DHT22_1, INPUT);
+    pinMode(DHT22_2, INPUT);
+    pinMode(DHT11_1, INPUT);
+    pinMode(DHT11_2, INPUT);
     dht1.begin();
     dht2.begin();
     dht3.begin();
     dht4.begin();
 
-    pinMode(LM35DZ-1, INPUT);
-    pinMode(LM35DZ-2, INPUT);
-    pinMode(LM35DZ-3, INPUT);
+    pinMode(LM35DZ_1, INPUT);
+    pinMode(LM35DZ_2, INPUT);
+    pinMode(LM35DZ_3, INPUT);
 
     // DS18B20 sensors
     sensor1.begin();
@@ -125,16 +125,16 @@ void readDHT() {
 
     Serial.print("DHT22-1: ");
     Serial.println(dht1.readTemperature());
-    Serial.print("DHT22-2: ");
+    Serial.print("DHT22_2: ");
     Serial.println(dht2.readTemperature());
-    Serial.print("DHT11-1: ");
+    Serial.print("DHT11_1: ");
     Serial.println(dht3.readTemperature());
-    Serial.print("DHT11-2: ");
+    Serial.print("DHT11_2: ");
     Serial.println(dht4.readTemperature());
 }
 
 void readLM35DZ() {
-    int temp = analogRead(LM35DZ-1);
+    int temp = analogRead(LM35DZ_1);
     int realTemp = temp * 4.88;
     realTemp = realTemp / 10;
     Serial.print("LM35DZ-1: ");
