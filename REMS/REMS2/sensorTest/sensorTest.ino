@@ -12,39 +12,16 @@
 
 // DHT temperature sensors
 #define DHT22_1 28 // Living room
-#define DHT22_2 26 // Kitchen
-#define DHT11_1 24 // Laundry
-#define DHT11_2 22 // EQ
+#define DHT11_1 26 // Kitchen
+#define DHT11_2 24 // Laundry
+#define DHT11_3 22 // EQ
 
 // DHT Sensor setup
 #include <DHT.h>
 DHT dht1(DHT22_1, DHT22);
-DHT dht2(DHT22_2, DHT22);
-DHT dht3(DHT11_1, DHT11);
-DHT dht4(DHT11_2, DHT11);
-
-// LM35DZ temperature sensors
-#define LM35DZ_1 A13 // Kitchen
-#define LM35DZ_2 A14 // Laundry
-#define LM35DZ_3 A15 // Batheroom
-
-// DS18B20 temperature sensors
-#include <OneWire.h>
-#include <DallasTemperature.h>
-#define DS18B20_1 37 // D37
-#define DS18B20_2 39 // D39
-#define DS18B20_3 41 // D41
-
-// DS18B20 setup
-OneWire oneWire1(DS18B20_1);
-DallasTemperature sensor1(&oneWire1);
-
-OneWire oneWire2(DS18B20_2);
-DallasTemperature sensor2(&oneWire2);
-
-OneWire oneWire3(DS18B20_3);
-DallasTemperature sensor3(&oneWire3);
-
+DHT dht2(DHT11_1, DHT11);
+DHT dht3(DHT11_2, DHT11);
+DHT dht4(DHT11_3, DHT11);
 
 void setup() {
 
@@ -68,23 +45,12 @@ void setup() {
     dht2.begin();
     dht3.begin();
     dht4.begin();
-
-    pinMode(LM35DZ_1, INPUT);
-    pinMode(LM35DZ_2, INPUT);
-    pinMode(LM35DZ_3, INPUT);
-
-    // DS18B20 sensors
-    sensor1.begin();
-    sensor2.begin();
-    sensor3.begin();
 }
 
 void loop() {
-    readVibration();
-    readMotion();
+    //readVibration();
+    //readMotion();
     //readDHT();
-    //readLM35DZ();
-    //readDS18B20();
     delay(1000);
 }
 
@@ -125,46 +91,10 @@ void readDHT() {
 
     Serial.print("DHT22 Living: ");
     Serial.println(dht1.readTemperature());
-    Serial.print("DHT22 Kitchen: ");
+    Serial.print("DHT11 Kitchen: ");
     Serial.println(dht2.readTemperature());
     Serial.print("DHT11 Laundry: ");
     Serial.println(dht3.readTemperature());
     Serial.print("DHT11 EQ: ");
     Serial.println(dht4.readTemperature());
-}
-
-void readLM35DZ() {
-    int temp1 = analogRead(LM35DZ_1);
-    int realTemp1 = temp1 * 4.88;
-    realTemp1 = realTemp1 / 10;
-
-    int temp2 = analogRead(LM35DZ_2);
-    int realTemp2 = temp2 * 4.88;
-    realTemp2 = realTemp2 / 10;
-
-    int temp3 = analogRead(LM35DZ_3);
-    int realTemp3 = temp3 * 4.88;
-    realTemp3 = realTemp3 / 10;
-
-    Serial.print("LM35DZ Kitchen: ");
-    Serial.println(realTemp1);
-
-    Serial.print("LM35DZ Laundry: ");
-    Serial.println(realTemp2);
-
-    Serial.print("LM35DZ Bathroom: ");
-    Serial.println(realTemp3);
-}
-
-void readDS18B20() {
-    sensor1.requestTemperatures();
-    sensor2.requestTemperatures();
-    sensor3.requestTemperatures();
-
-    Serial.print("DS18B20 D37: ");
-    Serial.println(sensor1.getTempCByIndex(0));
-    Serial.print("DS18B20 D39: ");
-    Serial.println(sensor2.getTempCByIndex(0));
-    Serial.print("DS18B20 D41: ");
-    Serial.println(sensor3.getTempCByIndex(0));
 }
