@@ -93,11 +93,13 @@ void readVibration() {
     int vibration2 = digitalRead(VIBRATION2);
     int vibration3 = digitalRead(VIBRATION3);
 
-    Serial.print("Vibration Living: ");
+    Serial.print("Vibration D29: ");
     Serial.println(vibration1);
-    Serial.print("Vibration Kitchen: ");
+
+    Serial.print("Vibration D27: ");
     Serial.println(vibration2);
-    Serial.print("Vibration Laundry: ");
+
+    Serial.print("Vibration D25: ");
     Serial.println(vibration3);
 }
 
@@ -107,13 +109,16 @@ void readMotion() {
     int motion3 = digitalRead(MOTION3);
     int motion4 = digitalRead(MOTION4);
 
-    Serial.print("Motion Living: ");
+    Serial.print("Motion D36: ");
     Serial.println(motion1);
-    Serial.print("Motion Kitchen: ");
+
+    Serial.print("Motion D34: ");
     Serial.println(motion2);
-    Serial.print("Motion Laundry: ");
+
+    Serial.print("Motion D32: ");
     Serial.println(motion3);
-    Serial.print("Motion EQ: ");
+
+    Serial.print("Motion D30: ");
     Serial.println(motion4);
 }
 
@@ -123,14 +128,15 @@ void readDHT() {
     dht3.readTemperature();
     dht4.readTemperature();
 
-    Serial.print("DHT22 Living: ");
+    Serial.print("DHT22 D28: ");
     Serial.println(dht1.readTemperature());
-    Serial.print("DHT22 Kitchen: ");
+    Serial.print("DHT22 D26: ");
     Serial.println(dht2.readTemperature());
-    Serial.print("DHT11 Laundry: ");
+    Serial.print("DHT11 D24: ");
     Serial.println(dht3.readTemperature());
-    Serial.print("DHT11 EQ: ");
+    Serial.print("DHT11 D22: ");
     Serial.println(dht4.readTemperature());
+
 }
 
 void readLM35DZ() {
@@ -146,13 +152,13 @@ void readLM35DZ() {
     int realTemp3 = temp3 * 4.88;
     realTemp3 = realTemp3 / 10;
 
-    Serial.print("LM35DZ Kitchen: ");
+    Serial.print("LM35DZ A13: ");
     Serial.println(realTemp1);
 
-    Serial.print("LM35DZ Laundry: ");
+    Serial.print("LM35DZ A14: ");
     Serial.println(realTemp2);
 
-    Serial.print("LM35DZ Bathroom: ");
+    Serial.print("LM35DZ A15: ");
     Serial.println(realTemp3);
 }
 
