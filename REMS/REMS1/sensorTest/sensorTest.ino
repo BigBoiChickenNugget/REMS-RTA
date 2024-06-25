@@ -36,14 +36,14 @@ DHT dht4(DHT11_2, DHT11);
 #define DS18B20_3 41
 
 // DS18B20 setup
-OneWire oneWire(DS18B20_1);
-DallasTemperature sensor1(&oneWire);
+OneWire oneWire1(DS18B20_1);
+DallasTemperature sensor1(&oneWire1);
 
-OneWire oneWire(DS18B20_2);
-DallasTemperature sensor2(&oneWire);
+OneWire oneWire2(DS18B20_2);
+DallasTemperature sensor2(&oneWire2);
 
-OneWire oneWire(DS18B20_3);
-DallasTemperature sensor3(&oneWire);
+OneWire oneWire3(DS18B20_3);
+DallasTemperature sensor3(&oneWire3);
 
 
 void setup() {
@@ -80,8 +80,8 @@ void setup() {
 }
 
 void loop() {
-    //readVibration();
-    //readMotion();
+    readVibration();
+    readMotion();
     //readDHT();
     //readLM35DZ();
     //readDS18B20();
@@ -134,11 +134,26 @@ void readDHT() {
 }
 
 void readLM35DZ() {
-    int temp = analogRead(LM35DZ_1);
-    int realTemp = temp * 4.88;
-    realTemp = realTemp / 10;
+    int temp1 = analogRead(LM35DZ_1);
+    int realTemp1 = temp1 * 4.88;
+    realTemp1 = realTemp1 / 10;
+
+    int temp2 = analogRead(LM35DZ_2);
+    int realTemp2 = temp2 * 4.88;
+    realTemp2 = realTemp2 / 10;
+
+    int temp3 = analogRead(LM35DZ_3);
+    int realTemp3 = temp3 * 4.88;
+    realTemp3 = realTemp3 / 10;
+
     Serial.print("LM35DZ-1: ");
-    Serial.println(realTemp);
+    Serial.println(realTemp1);
+
+    Serial.print("LM35DZ-2: ");
+    Serial.println(realTemp2);
+
+    Serial.print("LM35DZ-3: ");
+    Serial.println(realTemp3);
 }
 
 void readDS18B20() {

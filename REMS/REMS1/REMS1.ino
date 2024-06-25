@@ -211,9 +211,9 @@ void ClientResponse(EthernetClient client) {
     }
 
     // Temperature sensor readings.
-    tmp1 = sensor_1.requestTemperatures();
-    tmp2 = sensor_2.requestTemperatures();
-    tmp3 = sensor_3.requestTemperatures();
+    sensor_1.requestTemperatures();
+    sensor_2.requestTemperatures();
+    sensor_3.requestTemperatures();
 
     // Create temperature sensors small header but position it below the rest
     client.println("<h4 style='position: relative; top: 5%;'>Temperature Sensors</h4>");
