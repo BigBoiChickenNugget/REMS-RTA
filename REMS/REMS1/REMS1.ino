@@ -10,18 +10,6 @@
 #define HEATREQUEST 31
 #define COOLREQUEST 35
 
-// Pins on which the sound sensors are.
-#define SOUNDSENSOR1 23
-#define SOUNDSENSOR2 25
-#define SOUNDSENSOR3 27
-#define SOUNDSENSOR4 23
-
-// Pins on which the motion sensors are.
-#define MOTIONSENSOR1 30
-#define MOTIONSENSOR2 32
-#define MOTIONSENSOR3 34
-#define MOTIONSENSOR4 36
-
 // Pin to receive smoke alarm on signal from RTA.
 #define SMOKEALARM 43
 
@@ -31,19 +19,58 @@
 // Pin to shut water off.
 #define WATERSHUTOFF 33
 
+// Sound sensors (not sure what microphone is yet)
+#define VIBRATION1 29 // Living room
+#define VIBRATION2 27 // Kitchen
+#define VIBRATION3 25 // Laundry
+#define MICROPHONE 23 // EQ
+int vibrations[] = new int[3];
 
-// Temperature pins setup.
-#define ONE_WIRE_BUS_1 37
-#define ONE_WIRE_BUS_2 39
-#define ONE_WIRE_BUS_3 41
+// Motion sensors
+#define MOTION1 36 // Living room
+#define MOTION2 34 // Kitchen
+#define MOTION3 32 // Laundry
+#define MOTION4 30 // EQ
+int motions[] = new int[4];
 
-OneWire onewire_1(ONE_WIRE_BUS_1);
-OneWire onewire_2(ONE_WIRE_BUS_2);
-OneWire onewire_3(ONE_WIRE_BUS_3);
+// DHT temperature sensors
+#define DHT22_1 28 // Living room
+#define DHT22_2 26 // Kitchen
+#define DHT11_1 24 // Laundry
+#define DHT11_2 22 // EQ
 
-DallasTemperature sensor_1(&onewire_1);
-DallasTemperature sensor_2(&onewire_2);
-DallasTemperature sensor_3(&onewire_3);
+// DHT Sensor setup
+#include <DHT.h>
+DHT dht1(DHT22_1, DHT22);
+DHT dht2(DHT22_2, DHT22);
+DHT dht3(DHT11_1, DHT11);
+DHT dht4(DHT11_2, DHT11);
+float dht[] = new float[4];
+
+// LM35DZ temperature sensors
+#define LM35DZ_1 A13 // Kitchen
+#define LM35DZ_2 A14 // Laundry
+#define LM35DZ_3 A15 // Batheroom
+float LM35DZ[] = new float[3];
+
+// DS18B20 temperature sensors
+#include <OneWire.h>
+#include <DallasTemperature.h>
+#define DS18B20_1 37 // D37
+#define DS18B20_2 39 // D39
+#define DS18B20_3 41 // D41
+float DS18B20[] = new float[3];
+
+// DS18B20 setup
+OneWire oneWire1(DS18B20_1);
+DallasTemperature sensor1(&oneWire1);
+
+OneWire oneWire2(DS18B20_2);
+DallasTemperature sensor2(&oneWire2);
+
+OneWire oneWire3(DS18B20_3);
+DallasTemperature sensor3(&oneWire3);
+
 
 // Mac address of Arduino REMS board.
 byte mac[] = {
@@ -57,7 +84,6 @@ EthernetServer server(80);
 
 // String that'll store the response from the webpage.
 String httpResponse;
-boolean changed = 0;
 
 // Array to store status of buttons. Order is heat, cool, power, water.
 boolean status[] = {false, false, false, false};
@@ -77,16 +103,6 @@ void setup() {
     digitalWrite(HEATREQUEST, HIGH);
     digitalWrite(COOLREQUEST, HIGH);
 
-    pinMode(SOUNDSENSOR1, INPUT);
-    pinMode(SOUNDSENSOR2, INPUT);
-    pinMode(SOUNDSENSOR3, INPUT);
-    pinMode(SOUNDSENSOR4, INPUT);
-
-    pinMode(MOTIONSENSOR1, INPUT);
-    pinMode(MOTIONSENSOR2, INPUT);
-    pinMode(MOTIONSENSOR3, INPUT);
-    pinMode(MOTIONSENSOR4, INPUT);
-
     pinMode(SMOKEALARM, INPUT);
 
     pinMode(POWERSHUTOFF, OUTPUT);
@@ -95,17 +111,49 @@ void setup() {
     pinMode(WATERSHUTOFF, OUTPUT);
     digitalWrite(WATERSHUTOFF, HIGH);
 
-    // Start temperature sensors.
-    sensor_1.begin();
-    sensor_2.begin();
-    sensor_3.begin();
+    // Setup sensors
+    pinMode(VIBRATION1, INPUT);
+    pinMode(VIBRATION2, INPUT);
+    pinMode(VIBRATION3, INPUT);
+
+    pinMode(MOTION1, INPUT);
+    pinMode(MOTION2, INPUT);
+    pinMode(MOTION3, INPUT);
+    pinMode(MOTION4, INPUT);
+
+    // DHT Temp sensors
+    pinMode(DHT22_1, INPUT);
+    pinMode(DHT22_2, INPUT);
+    pinMode(DHT11_1, INPUT);
+    pinMode(DHT11_2, INPUT);
+    dht1.begin();
+    dht2.begin();
+    dht3.begin();
+    dht4.begin();
+
+    // LM35DZ Temp sensors
+    pinMode(LM35DZ_1, INPUT);
+    pinMode(LM35DZ_2, INPUT);
+    pinMode(LM35DZ_3, INPUT);
+
+    // DS18B20 temp sensors
+    sensor1.begin();
+    sensor2.begin();
+    sensor3.begin();
+
 }
 
 void loop() {
 
-
     // Listen for incoming clients.
     EthernetClient client = server.available();
+
+    // Read sensors
+    readVibration();
+    readMotion();
+    readDHT();
+    readLM35DZ();
+    readDS18B20();
 
     // If a client is found...
     if (client) {
@@ -210,17 +258,47 @@ void ClientResponse(EthernetClient client) {
 	digitalWrite(WATERSHUTOFF, HIGH);
     }
 
-    // Temperature sensor readings.
-    sensor_1.requestTemperatures();
-    sensor_2.requestTemperatures();
-    sensor_3.requestTemperatures();
+    // Div tag for the vibration sensors.
+    client.println("<div style='position: relative; top: 10%'>");
+    client.println("<h4>Vibration Sensors</h4>");
+    client.println("<p>Living Room: " + vibrations[0] + "</p>");
+    client.println("<p>Kitchen: " + vibrations[1] + "</p>");
+    client.println("<p>Laundry: " + vibrations[2] + "</p>");
+    client.println("</div>");
 
-    // Create temperature sensors small header but position it below the rest
-    client.println("<h4 style='position: relative; top: 5%;'>Temperature Sensors</h4>");
-    client.println("<p style='position: relative; top: 1%;'>Temperature Sensor 1: " + String(sensor_1.getTempCByIndex(0)) + " C</p>");
-    client.println("<p style='position: relative; top: 1%;'>Temperature Sensor 2: " + String(sensor_2.getTempCByIndex(0)) + " C</p>");
-    client.println("<p style='position: relative; top: 1%;'>Temperature Sensor 3: " + String(sensor_3.getTempCByIndex(0)) + " C</p>");
+    // Div tag for the motion sensors.
+    client.println("<div style='position: relative; top: 10%'>");
+    client.println("<h4>Motion Sensors</h4>");
+    client.println("<p>Living Room: " + motions[0] + "</p>");
+    client.println("<p>Kitchen: " + motions[1] + "</p>");
+    client.println("<p>Laundry: " + motions[2] + "</p>");
+    client.println("<p>EQ: " + motions[3] + "</p>");
+    client.println("</div>");
 
+    // Div tag for the DHT sensors.
+    client.println("<div style='position: relative; top: 10%'>");
+    client.println("<h4>DHT Sensors</h4>");
+    client.println("<p>Living Room: " + dht[0] + "</p>");
+    client.println("<p>Kitchen: " + dht[1] + "</p>");
+    client.println("<p>Laundry: " + dht[2] + "</p>");
+    client.println("<p>EQ: " + dht[3] + "</p>");
+    client.println("</div>");
+
+    // Div tag for the LM35DZ sensors.
+    client.println("<div style='position: relative; top: 10%'>");
+    client.println("<h4>LM35DZ Sensors</h4>");
+    client.println("<p>Kitchen: " + LM35DZ[0] + "</p>");
+    client.println("<p>Laundry: " + LM35DZ[1] + "</p>");
+    client.println("<p>Bathroom: " + LM35DZ[2] + "</p>");
+    client.println("</div>");
+
+    // Div tag for the DS18B20 sensors.
+    client.println("<div style='position: relative; top: 10%'>");
+    client.println("<h4>DS18B20 Sensors</h4>");
+    client.println("<p>Living Room: " + DS18B20[0] + "</p>");
+    client.println("<p>Kitchen: " + DS18B20[1] + "</p>");
+    client.println("<p>Laundry: " + DS18B20[2] + "</p>");
+    client.println("</div>");
 
     client.println("</body></html>");
 }
@@ -251,4 +329,54 @@ void readRequest(EthernetClient client) {
     if (httpResponse.indexOf("?waterOff") >= 0) {
 	status[3] = !status[3];
     }
+}
+
+// Functions to read the sensors.
+void readVibration() {
+    vibrations[0] = digitalRead(VIBRATION1);
+    vibrations[1] = digitalRead(VIBRATION2);
+    vibrations[2] = digitalRead(VIBRATION3);
+}
+
+void readMotion() {
+    motions[0] = digitalRead(MOTION1);
+    motions[1] = digitalRead(MOTION2);
+    motions[2] = digitalRead(MOTION3);
+    motions[3] = digitalRead(MOTION4);
+
+}
+
+void readDHT() {
+    dht[0] = dht1.readTemperature();
+    dht[1] = dht2.readTemperature();
+    dht[2] = dht3.readTemperature();
+    dht[3] = dht4.readTemperature();
+}
+
+void readLM35DZ() {
+    float temp1 = analogRead(LM35DZ_1);
+    float realTemp1 = temp1 * 4.88;
+    realTemp1 = realTemp1 / 10;
+
+    float temp2 = analogRead(LM35DZ_2);
+    float realTemp2 = temp2 * 4.88;
+    realTemp2 = realTemp2 / 10;
+
+    float temp3 = analogRead(LM35DZ_3);
+    float realTemp3 = temp3 * 4.88;
+    realTemp3 = realTemp3 / 10;
+
+    LM35DZ[0] = realTemp1;
+    LM35DZ[1] = realTemp2;
+    LM35DZ[2] = realTemp3;
+}
+
+void readDS18B20() {
+    sensor1.requestTemperatures();
+    sensor2.requestTemperatures();
+    sensor3.requestTemperatures();
+
+    DS18B20[0] = sensor1.getTempCByIndex(0);
+    DS18B20[1] = sensor2.getTempCByIndex(0);
+    DS18B20[2] = sensor3.getTempCByIndex(0);
 }
