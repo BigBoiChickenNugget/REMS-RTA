@@ -261,43 +261,43 @@ void ClientResponse(EthernetClient client) {
     // Div tag for the vibration sensors.
     client.println("<div style='position: relative; top: 10%'>");
     client.println("<h4>Vibration Sensors</h4>");
-    client.println("<p>Living Room: " + vibrations[0] + "</p>");
-    client.println("<p>Kitchen: " + vibrations[1] + "</p>");
-    client.println("<p>Laundry: " + vibrations[2] + "</p>");
+    client.println("<p>Living Room: " + String(vibrations[0]) + "</p>");
+    client.println("<p>Kitchen: " + String(vibrations[1]) + "</p>");
+    client.println("<p>Laundry: " + String(vibrations[2]) + "</p>");
     client.println("</div>");
 
     // Div tag for the motion sensors.
     client.println("<div style='position: relative; top: 10%'>");
     client.println("<h4>Motion Sensors</h4>");
-    client.println("<p>Living Room: " + motions[0] + "</p>");
-    client.println("<p>Kitchen: " + motions[1] + "</p>");
-    client.println("<p>Laundry: " + motions[2] + "</p>");
-    client.println("<p>EQ: " + motions[3] + "</p>");
+    client.println("<p>Living Room: " + String(motions[0]) + "</p>");
+    client.println("<p>Kitchen: " + String(motions[1]) + "</p>");
+    client.println("<p>Laundry: " + String(motions[2]) + "</p>");
+    client.println("<p>EQ: " + String(motions[3]) + "</p>");
     client.println("</div>");
 
     // Div tag for the DHT sensors.
     client.println("<div style='position: relative; top: 10%'>");
     client.println("<h4>DHT Sensors</h4>");
-    client.println("<p>Living Room: " + dht[0] + "</p>");
-    client.println("<p>Kitchen: " + dht[1] + "</p>");
-    client.println("<p>Laundry: " + dht[2] + "</p>");
-    client.println("<p>EQ: " + dht[3] + "</p>");
+    client.println("<p>Living Room: " + String(dht[0]) + "</p>");
+    client.println("<p>Kitchen: " + String(dht[1]) + "</p>");
+    client.println("<p>Laundry: " + String(dht[2]) + "</p>");
+    client.println("<p>EQ: " + String(dht[3]) + "</p>");
     client.println("</div>");
 
     // Div tag for the LM35DZ sensors.
     client.println("<div style='position: relative; top: 10%'>");
     client.println("<h4>LM35DZ Sensors</h4>");
-    client.println("<p>Kitchen: " + LM35DZ[0] + "</p>");
-    client.println("<p>Laundry: " + LM35DZ[1] + "</p>");
-    client.println("<p>Bathroom: " + LM35DZ[2] + "</p>");
+    client.println("<p>Kitchen: " + String(LM35DZ[0]) + "</p>");
+    client.println("<p>Laundry: " + String(LM35DZ[1]) + "</p>");
+    client.println("<p>Bathroom: " + String(LM35DZ[2]) + "</p>");
     client.println("</div>");
 
     // Div tag for the DS18B20 sensors.
     client.println("<div style='position: relative; top: 10%'>");
     client.println("<h4>DS18B20 Sensors</h4>");
-    client.println("<p>Living Room: " + DS18B20[0] + "</p>");
-    client.println("<p>Kitchen: " + DS18B20[1] + "</p>");
-    client.println("<p>Laundry: " + DS18B20[2] + "</p>");
+    client.println("<p>Living Room: " + String(DS18B20[0]) + "</p>");
+    client.println("<p>Kitchen: " + String(DS18B20[1]) + "</p>");
+    client.println("<p>Laundry: " + String(DS18B20[2]) + "</p>");
     client.println("</div>");
 
     client.println("</body></html>");
