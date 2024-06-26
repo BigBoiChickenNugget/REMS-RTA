@@ -24,14 +24,14 @@
 #define VIBRATION2 27 // Kitchen
 #define VIBRATION3 25 // Laundry
 #define MICROPHONE 23 // EQ
-int vibrations[] = new int[3];
+int vibrations[] = { 0, 0, 0 };
 
 // Motion sensors
 #define MOTION1 36 // Living room
 #define MOTION2 34 // Kitchen
 #define MOTION3 32 // Laundry
 #define MOTION4 30 // EQ
-int motions[] = new int[4];
+int motions[] = { 0, 0, 0, 0 };
 
 // DHT temperature sensors
 #define DHT22_1 28 // Living room
@@ -45,13 +45,13 @@ DHT dht1(DHT22_1, DHT22);
 DHT dht2(DHT22_2, DHT22);
 DHT dht3(DHT11_1, DHT11);
 DHT dht4(DHT11_2, DHT11);
-float dht[] = new float[4];
+float dht[] = { 0.0, 0.0, 0.0, 0.0 };
 
 // LM35DZ temperature sensors
 #define LM35DZ_1 A13 // Kitchen
 #define LM35DZ_2 A14 // Laundry
 #define LM35DZ_3 A15 // Batheroom
-float LM35DZ[] = new float[3];
+float LM35DZ[] = { 0.0, 0.0, 0.0 };
 
 // DS18B20 temperature sensors
 #include <OneWire.h>
@@ -59,7 +59,7 @@ float LM35DZ[] = new float[3];
 #define DS18B20_1 37 // D37
 #define DS18B20_2 39 // D39
 #define DS18B20_3 41 // D41
-float DS18B20[] = new float[3];
+float DS18B20[] = { 0.0, 0.0, 0.0 };
 
 // DS18B20 setup
 OneWire oneWire1(DS18B20_1);
