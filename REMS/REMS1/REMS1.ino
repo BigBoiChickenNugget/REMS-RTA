@@ -180,6 +180,7 @@ void ClientResponse(EthernetClient client) {
     client.println("HTTP/1.1 200 OK");
     client.println("Content-Type: text/html");
     client.println("Connection: close");
+    client.println("Refresh: 5");
     client.println();
 
     // Begin HTML
