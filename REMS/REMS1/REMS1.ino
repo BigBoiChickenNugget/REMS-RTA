@@ -100,16 +100,16 @@ void setup() {
     // Setup all pins.
     pinMode(HEATREQUEST, OUTPUT);
     pinMode(COOLREQUEST, OUTPUT);
-    digitalWrite(HEATREQUEST, HIGH);
-    digitalWrite(COOLREQUEST, HIGH);
+    digitalWrite(HEATREQUEST, LOW);
+    digitalWrite(COOLREQUEST, LOW);
 
     pinMode(SMOKEALARM, INPUT);
 
     pinMode(POWERSHUTOFF, OUTPUT);
-    digitalWrite(POWERSHUTOFF, HIGH);
+    digitalWrite(POWERSHUTOFF, LOW);
 
     pinMode(WATERSHUTOFF, OUTPUT);
-    digitalWrite(WATERSHUTOFF, HIGH);
+    digitalWrite(WATERSHUTOFF, LOW);
 
     // Setup sensors
     pinMode(VIBRATION1, INPUT);
@@ -222,41 +222,41 @@ void ClientResponse(EthernetClient client) {
 
     // End body and HTML.
     if (status[0]) {
-	digitalWrite(HEATREQUEST, LOW);
+	digitalWrite(HEATREQUEST, HIGH);
 	Serial.println("HEAT ON");
     }
 
     else {
-	digitalWrite(HEATREQUEST, HIGH);
+	digitalWrite(HEATREQUEST, LOW);
 	Serial.println("HEAT OFF");
     }
 
     if (status[1]) {
-	digitalWrite(COOLREQUEST, LOW);
+	digitalWrite(COOLREQUEST, HIGH);
 	Serial.println("COOL ON");
     }
 
     else {
-	digitalWrite(COOLREQUEST, HIGH);
+	digitalWrite(COOLREQUEST, LOW);
 	Serial.println("COOL OFF");
     }
 
     if (status[2]) {
-	digitalWrite(POWERSHUTOFF, LOW);
+	digitalWrite(POWERSHUTOFF, HIGH);
 	client.println("POWER OFF");
     }
 
     else {
-	digitalWrite(POWERSHUTOFF, HIGH);
+	digitalWrite(POWERSHUTOFF, LOW);
     }
 
     if (status[3]) {
-	digitalWrite(WATERSHUTOFF, LOW);
+	digitalWrite(WATERSHUTOFF, HIGH);
 	client.println("WATER OFF");
     }
 
     else {
-	digitalWrite(WATERSHUTOFF, HIGH);
+	digitalWrite(WATERSHUTOFF, LOW);
     }
 
     // Div tag for the vibration sensors.
