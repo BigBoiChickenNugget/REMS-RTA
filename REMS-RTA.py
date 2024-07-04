@@ -8,20 +8,20 @@ import os
 rems1Port = "/dev/ttyACM0"
 rems2Port = "/dev/ttyACM1"
 
-rta1Port = "/dev/ttyUSB0"
-rta2Port = "/dev/ttyUSB1"
+rta1Port = "/dev/ttyUSB1"
+rta2Port = "/dev/ttyUSB2"
 
 # Upload the code to the REMS Arduinos.
 os.system("arduino-cli compile --fqbn arduino:avr:mega ~/REMS-RTA/REMS/REMS1/REMS1.ino")
-os.system("arduino-cli upload -p /dev/ttyACM0 --fqbn arduino:avr:mega ~/REMS-RTA/REMS/REMS1/REMS1.ino")
+os.system("arduino-cli upload -p " + rems1Port + " --fqbn arduino:avr:mega ~/REMS-RTA/REMS/REMS1/REMS1.ino")
 os.system("arduino-cli compile --fqbn arduino:avr:mega ~/REMS-RTA/REMS/REMS2/REMS2.ino")
-os.system("arduino-cli upload -p /dev/ttyACM0 --fqbn arduino:avr:mega ~/REMS-RTA/REMS/REMS2/REMS2.ino")
+os.system("arduino-cli upload -p " + resm2Port + " --fqbn arduino:avr:mega ~/REMS-RTA/REMS/REMS2/REMS2.ino")
 
 
 # Upload the code to the RTA Arduinos.
 os.system("arduino-cli compile --fqbn arduino:avr:nano ~/REMS-RTA/RTA/RTA.ino")
-os.system("arduino-cli upload -p /dev/ttyUSB0 --fqbn arduino:avr:nano ~/REMS-RTA/RTA/RTA.ino")
-os.system("arduino-cli upload -p /dev/ttyUSB1 --fqbn arduino:avr:nano ~/REMS-RTA/RTA/RTA.ino")
+os.system("arduino-cli upload -p " + rta1Port + " --fqbn arduino:avr:nano ~/REMS-RTA/RTA/RTA.ino")
+os.system("arduino-cli upload -p " + rta2Port + " --fqbn arduino:avr:nano ~/REMS-RTA/RTA/RTA.ino")
 
 # Open a serial connection with the RTA and REMS.
 REMS1 = serial.Serial("/dev/ttyACM0", 9600)
