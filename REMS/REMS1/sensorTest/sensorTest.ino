@@ -21,7 +21,7 @@
 DHT dht1(DHT22_1, DHT22);
 DHT dht2(DHT22_2, DHT22);
 DHT dht3(DHT11_1, DHT11);
-DHT dht4(DHT11_2, DHT11);
+DHT dht4(DHT11_2, DHT22);
 
 // LM35DZ temperature sensors
 #define LM35DZ_1 A13 // Kitchen
@@ -80,11 +80,11 @@ void setup() {
 }
 
 void loop() {
-    readVibration();
-    readMotion();
-    //readDHT();
-    //readLM35DZ();
-    //readDS18B20();
+    //readVibration();
+    //readMotion();
+    readDHT();
+    readLM35DZ();
+    readDS18B20();
     delay(1000);
 }
 

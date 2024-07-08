@@ -11,7 +11,6 @@ void setup() {
 	// Keep them off by default. The pin pushes low voltage and the relay flips it around so they turn on when the program starts.
 	digitalWrite(HEAT, LOW);
 	digitalWrite(COOL, LOW);
-	digitalWrite(HEAT, LOW);
 }
 
 void loop() {
