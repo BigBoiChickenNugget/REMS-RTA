@@ -2,12 +2,44 @@
 #include <SPI.h>
 #include <EthernetENC.h>
 
+// Pins for communicating with residence and stuff
 #define HEATREQUEST 12
 #define COOLREQUEST 14
 #define SMOKEALARM 33
 #define WATERSHUTOFF 32
 #define WATERLEAK 34
 #define POWERSHUTOFF 15
+
+// Sound sensors
+#define VIBRATION1 2 // SW1815P
+#define VIBRATION2 27 // SW1815P
+#define VIBRATION3 21
+#define VIBRATION4 13
+int vibraions[4] = { 0 };
+
+// Motion sensors
+#define MOTION1 0
+#define MOTION2 26
+#define MOTION3 22
+#define MOTION4 35
+int motions[4] = { 0 };
+
+// DS18B20 temperature sensors
+#include <OneWire.h>
+#include <DallasTemperature.h>
+#define DS18B20_1 4
+float DS18B20[1] = { 0.0 };
+OneWire oneWire1(DS18B20_1);
+
+// DHT22 temperature and humidity sensors
+#define DHT22_1 25
+#define DHT22_2 17
+float DHT22[2] = { 0.0 };
+
+#include <DHT.h>
+DHT dht1(DHT22_1, DHT22);
+DHT dht2(DHT22_2, DHT22);
+
 
 // Mac address of Arduino REMS board.
 byte mac[] = {
@@ -33,6 +65,38 @@ void setup() {
     // Start webserver.
     Ethernet.begin(mac, ip);
     server.begin();
+
+    // Setup all pins.
+    pinMode(HEATREQUEST, OUTPUT);
+    pinMode(COOLREQUEST, OUTPUT);
+    digitalWrite(HEATREQUEST, LOW);
+    digitalWrite(COOLREQUEST, LOW);
+
+    pinMode(SMOKEALARM, INPUT);
+
+    pinMode(POWERSHUTOFF, OUTPUT);
+    digitalWrite(POWERSHUTOFF, LOW);
+
+    pinMode(WATERSHUTOFF, OUTPUT);
+    digitalWrite(WATERSHUTOFF, LOW);
+
+    // Setup sensors
+    pinMode(VIBRATION1, INPUT);
+    pinMode(VIBRATION2, INPUT);
+    pinMode(VIBRATION3, INPUT);
+
+    pinMode(MOTION1, INPUT);
+    pinMode(MOTION2, INPUT);
+    pinMode(MOTION3, INPUT);
+
+    // DHT Temp sensors
+    pinMode(DHT22_1, INPUT);
+    pinMode(DHT22_2, INPUT);
+    dht1.begin();
+    dht2.begin();
+
+    // DS18B20 temp sensors
+    sensor1.begin();
 }
 
 void loop() {
@@ -41,6 +105,12 @@ void loop() {
 
 	// If a client is found...
 	if (client) {
+
+		// Read sensors
+		readVibration();
+		readMotion();
+		readDHT();
+		readDS18B20();
 
 		// If the client is availalble, read the incoming HTTP request.
 		if (client.available()) {
@@ -63,7 +133,7 @@ void ClientResponse(EthernetClient client) {
     client.println("HTTP/1.1 200 OK");
     client.println("Content-Type: text/html");
     client.println("Connection: close");
-    client.println("Refresh: 5");
+    // client.println("Refresh: 5"); Doesn't work with GET requests since it sends the same request again
     client.println();
 
     // Begin HTML
@@ -79,7 +149,7 @@ void ClientResponse(EthernetClient client) {
     // Start body portion of site. Header that has site label.
     client.println("<body>");
     client.println("<h1>ESP32 ENC</h1>");
-    client.println("<h4>192.168.3.166</h4>");
+    client.println("<h4>192.168.3.167</h4>");
 
     String heat, cool, power, water;
     for (int i = 0; i < 4; i++) {
@@ -170,3 +240,27 @@ void readRequest(EthernetClient client) {
 	}
 }
 
+
+// Functions to read the sensors.
+void readVibration() {
+    vibrations[0] = digitalRead(VIBRATION1);
+    vibrations[1] = digitalRead(VIBRATION2);
+    vibrations[2] = digitalRead(VIBRATION3);
+}
+
+void readMotion() {
+    motions[0] = digitalRead(MOTION1);
+    motions[1] = digitalRead(MOTION2);
+    motions[2] = digitalRead(MOTION3);
+}
+
+void readDHT() {
+    dht[0] = dht1.readTemperature();
+    dht[1] = dht2.readTemperature();
+}
+
+
+void readDS18B20() {
+    sensor1.requestTemperatures();
+    DS18B20[0] = sensor1.getTempCByIndex(0);
+}
