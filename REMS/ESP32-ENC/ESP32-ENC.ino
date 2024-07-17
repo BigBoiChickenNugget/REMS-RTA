@@ -2,6 +2,13 @@
 #include <SPI.h>
 #include <EthernetENC.h>
 
+#define HEATREQUEST 12
+#define COOLREQUEST 14
+#define SMOKEALARM 33
+#define WATERSHUTOFF 32
+#define WATERLEAK 34
+#define POWERSHUTOFF 15
+
 // Mac address of Arduino REMS board.
 byte mac[] = {
     0x2A, 0xF3, 0xB1, 0x08, 0x55, 0x4E
