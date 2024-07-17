@@ -145,32 +145,32 @@ void setup() {
 
 void loop() {
 
-    // Listen for incoming clients.
-    EthernetClient client = server.available();
+	// Listen for incoming clients.
+	EthernetClient client = server.available();
 
-    // Read sensors
-    readVibration();
-    readMotion();
-    readDHT();
-    readLM35DZ();
-    readDS18B20();
+	// Read sensors
+	readVibration();
+	readMotion();
+	readDHT();
+	readLM35DZ();
+	readDS18B20();
 
-    // If a client is found...
-    if (client) {
+	// If a client is found...
+	if (client) {
 
-	// If the client is availalble, read the incoming HTTP request.
-	if (client.available()) {
+		// If the client is availalble, read the incoming HTTP request.
+		if (client.available()) {
 
-	    // Calls a function to read the HTTP request and stores it in the httpResponse global String.
-	    readRequest(client);
+			// Calls a function to read the HTTP request and stores it in the httpResponse global String.
+			readRequest(client);
 
-	    // Displays the updated webpage in line with the request, and sends whatever commands the HTTP request asked to do.
-	    ClientResponse(client);
+			// Displays the updated webpage in line with the request, and sends whatever commands the HTTP request asked to do.
+			ClientResponse(client);
 
-	    delay(1);
-	    client.stop();
+			delay(1);
+			client.stop();
+		}
 	}
-    }
 }
 
 // Function to display entire webpage and process the HTTP request.
@@ -220,44 +220,44 @@ void ClientResponse(EthernetClient client) {
     client.println("<a href='/?waterOff'><button>" + water + "</button></a>");
 
 
-    // End body and HTML.
-    if (status[0]) {
-	digitalWrite(HEATREQUEST, HIGH);
-	Serial.println("HEAT ON");
-    }
+	// End body and HTML.
+	if (status[0]) {
+		digitalWrite(HEATREQUEST, HIGH);
+		Serial.println("HEAT ON");
+	}
 
-    else {
-	digitalWrite(HEATREQUEST, LOW);
-	Serial.println("HEAT OFF");
-    }
+	else {
+		digitalWrite(HEATREQUEST, LOW);
+		Serial.println("HEAT OFF");
+	}
 
-    if (status[1]) {
-	digitalWrite(COOLREQUEST, HIGH);
-	Serial.println("COOL ON");
-    }
+	if (status[1]) {
+		digitalWrite(COOLREQUEST, HIGH);
+		Serial.println("COOL ON");
+	}
 
-    else {
-	digitalWrite(COOLREQUEST, LOW);
-	Serial.println("COOL OFF");
-    }
+	else {
+		digitalWrite(COOLREQUEST, LOW);
+		Serial.println("COOL OFF");
+	}
 
-    if (status[2]) {
-	digitalWrite(POWERSHUTOFF, HIGH);
-	client.println("POWER OFF");
-    }
+	if (status[2]) {
+		digitalWrite(POWERSHUTOFF, HIGH);
+		client.println("POWER OFF");
+	}
 
-    else {
-	digitalWrite(POWERSHUTOFF, LOW);
-    }
+	else {
+		digitalWrite(POWERSHUTOFF, LOW);
+	}
 
-    if (status[3]) {
-	digitalWrite(WATERSHUTOFF, HIGH);
-	client.println("WATER OFF");
-    }
+	if (status[3]) {
+		digitalWrite(WATERSHUTOFF, HIGH);
+		client.println("WATER OFF");
+	}
 
-    else {
-	digitalWrite(WATERSHUTOFF, LOW);
-    }
+	else {
+		digitalWrite(WATERSHUTOFF, LOW);
+	}
 
     // Div tag for the vibration sensors.
     client.println("<div style='position: relative; top: 10%'>");
