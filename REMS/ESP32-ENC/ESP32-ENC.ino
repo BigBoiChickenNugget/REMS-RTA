@@ -29,7 +29,10 @@ int motions[4] = { 0 };
 #include <DallasTemperature.h>
 #define DS18B20_1 4
 float DS18B20[1] = { 0.0 };
+
+// DS18B20 setup
 OneWire oneWire1(DS18B20_1);
+DallasTemperature sensor1(&oneWire1);
 
 // DHT22 temperature and humidity sensors
 #define DHT22_1 25
