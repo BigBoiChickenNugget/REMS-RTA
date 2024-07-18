@@ -11,7 +11,7 @@
 #define POWERSHUTOFF 15
 
 // Sound sensors
-#define VIBRATION1 2 // SW1815P
+//#define VIBRATION1 2 // SW1815P
 #define VIBRATION2 27 // SW1815P
 #define VIBRATION3 21
 #define VIBRATION4 13
@@ -84,7 +84,7 @@ void setup() {
     digitalWrite(WATERSHUTOFF, LOW);
 
     // Setup sensors
-    pinMode(VIBRATION1, INPUT);
+    //pinMode(VIBRATION1, INPUT);
     pinMode(VIBRATION2, INPUT);
     pinMode(VIBRATION3, INPUT);
 
@@ -277,7 +277,8 @@ void readRequest(EthernetClient client) {
 
 // Functions to read the sensors.
 void readVibration() {
-    vibrations[0] = digitalRead(VIBRATION1);
+    //vibrations[0] = digitalRead(VIBRATION1);
+	vibrations[0] = 1;
     vibrations[1] = digitalRead(VIBRATION2);
     vibrations[2] = digitalRead(VIBRATION3);
 }
