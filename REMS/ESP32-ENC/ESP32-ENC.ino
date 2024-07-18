@@ -18,7 +18,8 @@
 int vibrations[4] = { 0 };
 
 // Motion sensors
-#define MOTION1 0
+#define MOTION1 3
+#define REAL 0
 #define MOTION2 26
 #define MOTION3 22
 #define MOTION4 35
@@ -88,7 +89,8 @@ void setup() {
     pinMode(VIBRATION2, INPUT);
     pinMode(VIBRATION3, INPUT);
 
-    pinMode(MOTION1, INPUT);
+    pinMode(REAL, OUTPUT);
+	digitalWrite(REAL, LOW);
     pinMode(MOTION2, INPUT);
     pinMode(MOTION3, INPUT);
 
