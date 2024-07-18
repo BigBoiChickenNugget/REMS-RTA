@@ -213,34 +213,7 @@ void ClientResponse(EthernetClient client) {
 	else {
 		digitalWrite(WATERSHUTOFF, LOW);
 	}
-}
 
-//  Function that reads the incoming HTTP request.
-void readRequest(EthernetClient client) {
-
-	// Boolean variable to store if the request is POST (sending states of buttons).
-	httpResponse = "";
-
-	char c = client.read();
-
-	// Iterate through all the strings until the newline appears (in the case of a GET request) or until the line with all the checkbox statuses appears (in the case of a POST request).
-	while (c != '\n') {
-		httpResponse += c;
-		c = client.read();
-	}
-
-	if (httpResponse.indexOf("?heatrequest") >= 0) {
-		status[0] = !status[0];
-	}
-	if (httpResponse.indexOf("?coolrequest") >= 0) {
-		status[1] = !status[1];
-	}
-	if (httpResponse.indexOf("?powerOff") >= 0) {
-		status[2] = !status[2];
-	}
-	if (httpResponse.indexOf("?waterOff") >= 0) {
-		status[3] = !status[3];
-	}
     // Div tag for the vibration sensors.
     client.println("<div style='position: relative; top: 10%'>");
     client.println("<h4>Vibration Sensors</h4>");
@@ -271,6 +244,34 @@ void readRequest(EthernetClient client) {
     client.println("</div>");
 
     client.println("</body></html>");
+}
+
+//  Function that reads the incoming HTTP request.
+void readRequest(EthernetClient client) {
+
+	// Boolean variable to store if the request is POST (sending states of buttons).
+	httpResponse = "";
+
+	char c = client.read();
+
+	// Iterate through all the strings until the newline appears (in the case of a GET request) or until the line with all the checkbox statuses appears (in the case of a POST request).
+	while (c != '\n') {
+		httpResponse += c;
+		c = client.read();
+	}
+
+	if (httpResponse.indexOf("?heatrequest") >= 0) {
+		status[0] = !status[0];
+	}
+	if (httpResponse.indexOf("?coolrequest") >= 0) {
+		status[1] = !status[1];
+	}
+	if (httpResponse.indexOf("?powerOff") >= 0) {
+		status[2] = !status[2];
+	}
+	if (httpResponse.indexOf("?waterOff") >= 0) {
+		status[3] = !status[3];
+	}
 }
 
 
