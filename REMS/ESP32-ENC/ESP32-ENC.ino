@@ -178,6 +178,7 @@ void ClientResponse(EthernetClient client) {
 	client.println("xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');");
 	client.println("xhr.send('temperature=' + value);");
 	client.println("}");
+	client.println("</script>");
 
     String heat, cool, power, water;
     for (int i = 0; i < 4; i++) {
