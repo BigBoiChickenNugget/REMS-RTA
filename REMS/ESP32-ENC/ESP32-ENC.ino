@@ -130,6 +130,7 @@ void loop() {
 
 		// If the client is availalble, read the incoming HTTP request.
 		if (client.available()) {
+
 			// Calls a function to read the HTTP request and stores it in the httpResponse global String.
 			readRequest(client);
 
@@ -149,7 +150,7 @@ void ClientResponse(EthernetClient client) {
     client.println("HTTP/1.1 200 OK");
     client.println("Content-Type: text/html");
     client.println("Connection: close");
-    // client.println("Refresh: 5"); Doesn't work with GET requests since it sends the same request again
+    // client.println("Refresh: 5"); Doesn't work with GET requests since it sends the same request again which causes the request to be sent again
     client.println();
 
     // Begin HTML
@@ -167,6 +168,17 @@ void ClientResponse(EthernetClient client) {
     client.println("<h1>ESP32 ENC</h1>");
     client.println("<h4>192.168.3.167</h4>");
 
+	// Javascript function to get the value of the slider via POST.
+	client.println("<script>");
+	client.println("function getSliderValue() {");
+	client.println("var slider = document.getElementById('temperature');");
+	client.println("var value = slider.value;");
+	client.println("var xhr = new XMLHttpRequest();");
+	client.println("xhr.open('POST', '/', true);");
+	client.println("xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');");
+	client.println("xhr.send('temperature=' + value);");
+	client.println("}");
+
     String heat, cool, power, water;
     for (int i = 0; i < 4; i++) {
 	if (!status[i]) {
@@ -183,10 +195,16 @@ void ClientResponse(EthernetClient client) {
 	}
     }
 
-    client.println("<a href='/?heatrequest'><button>" + heat + "</button></a>");
-    client.println("<a href='/?coolrequest'><button>" + cool + "</button></a>");
+    //client.println("<a href='/?heatrequest'><button>" + heat + "</button></a>");
+    //client.println("<a href='/?coolrequest'><button>" + cool + "</button></a>");
     client.println("<a href='/?powerOff'><button>" + power + "</button></a>");
     client.println("<a href='/?waterOff'><button>" + water + "</button></a>");
+
+	// Slider form for temperature. On clicking the button, it sends a POST request to the server.
+	client.println("<div style='position: relative; top: 10%'>");
+	client.println("<h4>Temperature Control</h4>");
+	client.println("<input type='range' min='0' max='100' value='50' class='slider' id='temperature' oninput='getSliderValue()'>");
+	client.println("</div>");
 
 	// End body and HTML.
 	if (status[0]) {
@@ -277,6 +295,7 @@ void readRequest(EthernetClient client) {
 		httpResponse += c;
 		c = client.read();
 	}
+	Serial.println(httpResponse);
 
 	if (httpResponse.indexOf("?heatrequest") >= 0) {
 		status[0] = !status[0];
