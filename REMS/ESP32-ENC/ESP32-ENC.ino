@@ -168,15 +168,14 @@ void ClientResponse(EthernetClient client) {
     client.println("<h1>ESP32 ENC</h1>");
     client.println("<h4>192.168.3.167</h4>");
 
-	// Javascript function to get the value of the slider via POST.
+	// Javascript function to get the value of the temperature via POST.
 	client.println("<script>");
-	client.println("function getSliderValue() {");
-	client.println("var slider = document.getElementById('temperature');");
-	client.println("var value = slider.value;");
+	client.println("function getTemperature() {");
+	client.println("var temperature = document.getElementById('temperature').value;");
 	client.println("var xhr = new XMLHttpRequest();");
 	client.println("xhr.open('POST', '/', true);");
 	client.println("xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');");
-	client.println("xhr.send('temperature=' + value);");
+	client.println("xhr.send('temperature=' + temperature);");
 	client.println("}");
 	client.println("</script>");
 
@@ -201,10 +200,10 @@ void ClientResponse(EthernetClient client) {
     client.println("<a href='/?powerOff'><button>" + power + "</button></a>");
     client.println("<a href='/?waterOff'><button>" + water + "</button></a>");
 
-	// Slider form for temperature. On clicking the button, it sends a POST request to the server.
+	// Number input for the temperature. Default is 25 and max is 30 and min is 20. This is a box input that has a range of number values. Not a slider. Calls the getTemperature function when the value is changed.
 	client.println("<div style='position: relative; top: 10%'>");
 	client.println("<h4>Temperature Control</h4>");
-	client.println("<input type='range' min='0' max='100' value='50' class='slider' id='temperature' oninput='getSliderValue()'>");
+	client.println("<input type='number' id='temperature' value='25' max='30' min='20' oninput='getTemperature()'>");
 	client.println("</div>");
 
 	// End body and HTML.
