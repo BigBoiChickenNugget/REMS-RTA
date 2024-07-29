@@ -69,6 +69,9 @@ EthernetServer server(80);
 // String that'll store the response from the webpage.
 String httpResponse;
 
+// To store default temperature
+float temperature = 25.0;
+
 // Array to store status of buttons. Order is heat, cool, power, water.
 boolean status[] = {false, false, false, false};
 
@@ -295,19 +298,25 @@ void readRequest(EthernetClient client) {
 		httpResponse += c;
 		c = client.read();
 	}
-	Serial.println(httpResponse);
 
+/*
 	if (httpResponse.indexOf("?heatrequest") >= 0) {
 		status[0] = !status[0];
 	}
 	if (httpResponse.indexOf("?coolrequest") >= 0) {
 		status[1] = !status[1];
 	}
+	*/
 	if (httpResponse.indexOf("?powerOff") >= 0) {
 		status[2] = !status[2];
 	}
 	if (httpResponse.indexOf("?waterOff") >= 0) {
 		status[3] = !status[3];
+	}
+
+	// Change default temperature if the temperature is changed.
+	if (httpResponse.indexOf("temperature=") >= 0) {
+		temperature = httpResponse.substring(httpResponse.indexOf("temperature=") + 12).toFloat();
 	}
 }
 
