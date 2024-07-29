@@ -1,13 +1,13 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
 
-#define ONE_WIRE_BUS 34
+#define ONE_WIRE_BUS 17
 
 OneWire oneWire(ONE_WIRE_BUS);
 DallasTemperature sensors(&oneWire);
 
 void setup() {
-	Serial.begin(9600);
+	Serial.begin(115200);
 	sensors.begin();
 }
 

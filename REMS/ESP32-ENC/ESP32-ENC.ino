@@ -29,7 +29,11 @@ int motions[4] = { 0 };
 #include <OneWire.h>
 #include <DallasTemperature.h>
 #define DS18B20_1 4
-float DS18B20[1] = { 0.0 };
+#define DS18B20_2 25
+#define DS18B20_3 17
+#define DS18B20_4 16
+
+float DS18B20[4] = { 0.0 };
 
 // DS18B20 setup
 OneWire oneWire1(DS18B20_1);
@@ -73,8 +77,8 @@ void setup() {
     // Setup all pins.
     pinMode(HEATREQUEST, OUTPUT);
     pinMode(COOLREQUEST, OUTPUT);
-    digitalWrite(HEATREQUEST, LOW);
-    digitalWrite(COOLREQUEST, LOW);
+    digitalWrite(HEATREQUEST,LOW);
+    digitalWrite(COOLREQUEST, HIGH);
 
     pinMode(SMOKEALARM, INPUT);
 
