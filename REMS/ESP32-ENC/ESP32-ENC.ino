@@ -37,7 +37,14 @@ float DS18B20[4] = { 0.0 };
 
 // DS18B20 setup
 OneWire oneWire1(DS18B20_1);
+OneWire oneWire2(DS18B20_2);
+OneWire oneWire3(DS18B20_3);
+OneWire oneWire4(DS18B20_4);
 DallasTemperature sensor1(&oneWire1);
+DallasTemperature sensor2(&oneWire2);
+DallasTemperature sensor3(&oneWire3);
+DallasTemperature sensor4(&oneWire4);
+
 
 // DHT22 temperature and humidity sensors
 #define DHT22_1 25
@@ -220,6 +227,7 @@ void ClientResponse(EthernetClient client) {
 		digitalWrite(WATERSHUTOFF, LOW);
 	}
 
+/*
     // Div tag for the vibration sensors.
     client.println("<div style='position: relative; top: 10%'>");
     client.println("<h4>Vibration Sensors</h4>");
@@ -243,10 +251,14 @@ void ClientResponse(EthernetClient client) {
     client.println("<p>Kitchen: " + String(dht[1]) + "</p>");
     client.println("</div>");
 
+*/
     // Div tag for the DS18B20 sensors.
     client.println("<div style='position: relative; top: 10%'>");
     client.println("<h4>DS18B20 Sensors</h4>");
-    client.println("<p>Living Room: " + String(DS18B20[0]) + "</p>");
+    client.println("<p>Pin 4: " + String(DS18B20[0]) + "</p>");
+    client.println("<p>Pin 25: " + String(DS18B20[1]) + "</p>");
+    client.println("<p>Pin 17: " + String(DS18B20[2]) + "</p>");
+    client.println("<p>Pin 16: " + String(DS18B20[3]) + "</p>");
     client.println("</div>");
 
     client.println("</body></html>");
@@ -303,5 +315,11 @@ void readDHT() {
 
 void readDS18B20() {
     sensor1.requestTemperatures();
+	sensor2.requestTemperatures();
+	sensor3.requestTemperatures();
+	sensor4.requestTemperatures();
     DS18B20[0] = sensor1.getTempCByIndex(0);
+	DS18B20[1] = sensor2.getTempCByIndex(0);
+	DS18B20[2] = sensor3.getTempCByIndex(0);
+	DS18B20[3] = sensor4.getTempCByIndex(0);
 }
