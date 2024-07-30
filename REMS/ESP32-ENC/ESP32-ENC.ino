@@ -298,12 +298,16 @@ void readRequest(EthernetClient client) {
 	// Set POST to true if it is.
 	if (line.indexOf("POST") != -1) {
 		post = true;
+		Serial.println("POST");
+	} else {
+		Serial.println("GET");
 	}
 
 	// Iterate through all the strings until the newline appears (in the case of a GET request) or until the line with all the checkbox statuses appears (in the case of a POST request).
 	while (client.connected()) {
 		String line = client.readStringUntil('\r');
 		httpResponse += line;
+		Serial.println(line);
 	}
 
 	Serial.println(httpResponse);
