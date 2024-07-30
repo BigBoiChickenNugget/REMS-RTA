@@ -289,24 +289,33 @@ void ClientResponse(EthernetClient client) {
 void readRequest(EthernetClient client) {
 
 	// Boolean variable to store if the request is POST (sending states of buttons).
+	boolean post = false;
 	httpResponse = "";
 
-	char c = client.read();
+	// Read the string until the carnage return.
+	String line = client.readStringUntil('\r');
+
+	// Set POST to true if it is.
+	if (line.indexOf("POST") != -1) {
+		post = true;
+	}
 
 	// Iterate through all the strings until the newline appears (in the case of a GET request) or until the line with all the checkbox statuses appears (in the case of a POST request).
-	while (c != '\n') {
-		httpResponse += c;
-		c = client.read();
+	while (client.connected()) {
+		String line = client.readStringUntil('\r');
+		httpResponse += line;
 	}
 
-/*
-	if (httpResponse.indexOf("?heatrequest") >= 0) {
-		status[0] = !status[0];
-	}
-	if (httpResponse.indexOf("?coolrequest") >= 0) {
-		status[1] = !status[1];
-	}
-	*/
+	Serial.println(httpResponse);
+
+	/*
+	   if (httpResponse.indexOf("?heatrequest") >= 0) {
+	   status[0] = !status[0];
+	   }
+	   if (httpResponse.indexOf("?coolrequest") >= 0) {
+	   status[1] = !status[1];
+	   }
+	 */
 	if (httpResponse.indexOf("?powerOff") >= 0) {
 		status[2] = !status[2];
 	}
