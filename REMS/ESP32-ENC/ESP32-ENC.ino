@@ -308,6 +308,7 @@ void readRequest(EthernetClient client) {
 		String line = client.readStringUntil('\r');
 		httpResponse += line;
 		Serial.println(line);
+		if (
 	}
 
 	Serial.println(httpResponse);
