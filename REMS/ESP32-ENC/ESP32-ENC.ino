@@ -82,12 +82,13 @@ void ClientResponse(EthernetClient client) {
 	client.println("xhr.send('temperature=' + temperature);");
 	client.println("}");
 
-	// Javascript function to get the value of poweroff POST.
+	// Javascript function to get the value of poweroff POST. Also refreshes the page.
 	client.println("function powerOff() {");
 	client.println("var xhr = new XMLHttpRequest();");
 	client.println("xhr.open('POST', '/', true);");
 	client.println("xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');");
 	client.println("xhr.send('poweroff=1');");
+	client.println("location.reload();");
 	client.println("}");
 
 	// Javascript function to get the value of wateroff POST.
@@ -96,12 +97,7 @@ void ClientResponse(EthernetClient client) {
 	client.println("xhr.open('POST', '/', true);");
 	client.println("xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');");
 	client.println("xhr.send('wateroff=1');");
-	client.println("}");
-
-	// Refresh the page when a post request is made
-	client.println("window.onload = function() {");
-	client.println("if (window.location.href.indexOf('poweroff') != -1 || window.location.href.indexOf('wateroff') != -1 || window.location.href.indexOf('temperature') != -1) {");
-	client.println("window.location.href = '/';");
+	client.println("location.reload();");
 	client.println("}");
 
 	client.println("</script>");
