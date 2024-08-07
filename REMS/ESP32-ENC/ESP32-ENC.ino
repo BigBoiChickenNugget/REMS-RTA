@@ -40,6 +40,10 @@ void loop() {
 			// Call the ClientResponse function
 			ClientResponse(client);
 
+
+			// Read the incoming request
+			ReadRequest(client);
+
 			// Close the connection
 			delay(1);
 			client.stop();
@@ -147,39 +151,45 @@ void ReadRequest(EthernetClient client) {
 	// If the request is a POST request
 	if (request.indexOf("POST") != -1) {
 
-		// Read the rest of the request
-		request = client.readStringUntil('\r');
-		Serial.println(request);
+		while (true) {
 
-		// If the request is for the temperature
-		if (request.indexOf("temperature") != -1) {
+			// Read the rest of the request
+			request = client.readStringUntil('\r');
+			Serial.println(request);
 
-			// Get the temperature value
-			int temperature = request.substring(request.indexOf("temperature=") + 11).toInt();
-			Serial.println("Temperature: " + String(temperature));
-		}
+			// If the request is for the temperature
+			if (request.indexOf("temperature") != -1) {
 
-		// If the request is for power off
-		if (request.indexOf("poweroff") != -1) {
-
-			// If the power is on, turn it off. If the power is off, turn it on.
-			if (powerOn) {
-				powerOn = false;
+				// Get the temperature value
+				float temperature = request.substring(request.indexOf("temperature=") + 12).toFloat();
+				Serial.println("Temperature: " + String(temperature));
+				break;
 			}
-			else {
-				powerOn = true;
-			}
-		}
 
-		// If the request is for water off
-		if (request.indexOf("wateroff") != -1) {
+			// If the request is for power off
+			if (request.indexOf("poweroff") != -1) {
 
-			// If the water is on, turn it off. If the water is off, turn it on.
-			if (waterOn) {
-				waterOn = false;
+				// If the power is on, turn it off. If the power is off, turn it on.
+				if (powerOn) {
+					powerOn = false;
+				}
+				else {
+					powerOn = true;
+				}
+				break;
 			}
-			else {
-				waterOn = true;
+
+			// If the request is for water off
+			if (request.indexOf("wateroff") != -1) {
+
+				// If the water is on, turn it off. If the water is off, turn it on.
+				if (waterOn) {
+					waterOn = false;
+				}
+				else {
+					waterOn = true;
+				}
+				break;
 			}
 		}
 	}
