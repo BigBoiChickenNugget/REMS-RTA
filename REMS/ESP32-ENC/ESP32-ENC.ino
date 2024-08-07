@@ -17,6 +17,9 @@ EthernetServer server(80);
 bool powerOn = true;
 bool waterOn = true;
 
+// Global temperature variable
+float temperature = 25;
+
 // Setup
 void setup() {
 	// Begin serial monitor
@@ -95,6 +98,12 @@ void ClientResponse(EthernetClient client) {
 	client.println("xhr.send('wateroff=1');");
 	client.println("}");
 
+	// Refresh the page when a post request is made
+	client.println("window.onload = function() {");
+	client.println("if (window.location.href.indexOf('poweroff') != -1 || window.location.href.indexOf('wateroff') != -1 || window.location.href.indexOf('temperature') != -1) {");
+	client.println("window.location.href = '/';");
+	client.println("}");
+
 	client.println("</script>");
 	client.println("</head>");
 
@@ -161,7 +170,7 @@ void ReadRequest(EthernetClient client) {
 			if (request.indexOf("temperature") != -1) {
 
 				// Get the temperature value
-				float temperature = request.substring(request.indexOf("temperature=") + 12).toFloat();
+				temperature = request.substring(request.indexOf("temperature=") + 12).toFloat();
 				Serial.println("Temperature: " + String(temperature));
 				break;
 			}
