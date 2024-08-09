@@ -88,7 +88,6 @@ void ClientResponse(EthernetClient client) {
 	client.println("xhr.open('POST', '/', true);");
 	client.println("xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');");
 	client.println("xhr.send('poweroff=1');");
-	client.println("location.reload();");
 	client.println("}");
 
 	// Javascript function to get the value of wateroff POST.
@@ -97,7 +96,6 @@ void ClientResponse(EthernetClient client) {
 	client.println("xhr.open('POST', '/', true);");
 	client.println("xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');");
 	client.println("xhr.send('wateroff=1');");
-	client.println("location.reload();");
 	client.println("}");
 
 	client.println("</script>");
