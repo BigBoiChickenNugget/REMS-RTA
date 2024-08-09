@@ -13,7 +13,7 @@ IPAddress ip(192, 168, 3, 167);
 // Ethernet server
 EthernetServer server(80);
 
-// Booleans to store if power and water are on or off
+// Booleans to store if power and water are on or off. By default they are on.
 bool powerOn = true;
 bool waterOn = true;
 
@@ -43,7 +43,6 @@ void loop() {
 			// Call the ClientResponse function
 			ClientResponse(client);
 
-
 			// Read the incoming request
 			ReadRequest(client);
 
@@ -61,6 +60,9 @@ void ClientResponse(EthernetClient client) {
 	client.println("HTTP/1.1 200 OK");
 	client.println("Content-Type: text/html");
 	client.println("Connection: close");
+
+	// Refresh the page every 3 seconds
+	client.println("Refresh: 3");
 	client.println();
 
 	// Start the HTML
@@ -88,7 +90,6 @@ void ClientResponse(EthernetClient client) {
 	client.println("xhr.open('POST', '/', true);");
 	client.println("xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');");
 	client.println("xhr.send('poweroff=1');");
-	client.println("location.reload();");
 	client.println("}");
 
 	// Javascript function to get the value of wateroff POST.
@@ -97,7 +98,6 @@ void ClientResponse(EthernetClient client) {
 	client.println("xhr.open('POST', '/', true);");
 	client.println("xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');");
 	client.println("xhr.send('wateroff=1');");
-	client.println("location.reload();");
 	client.println("}");
 
 	client.println("</script>");
@@ -113,6 +113,9 @@ void ClientResponse(EthernetClient client) {
 	client.println("<div style='position: relative; top: 10%'>");
 	client.println("<h4>Temperature Control</h4>");
 	client.println("<input type='number' id='temperature' value='25' max='30' min='20' oninput='getTemperature()'>");
+
+	// Show current temperature
+	client.println("<p>Current Temperature: " + String(temperature) + "°C</p>");
 	client.println("</div>");
 
 	// Button for power off. Calls the getPowerOff function when clicked.
@@ -126,6 +129,11 @@ void ClientResponse(EthernetClient client) {
 	else {
 		client.println("<button onclick='powerOff()'>Power On</button>");
 	}
+
+	// If water is off say that on website
+	if (!waterOn) {
+		client.println("<p>Water is off</p>");
+	}
 	client.println("</div>");
 
 	// Button for water off. Calls the getWaterOff function when clicked.
@@ -138,6 +146,11 @@ void ClientResponse(EthernetClient client) {
 	}
 	else {
 		client.println("<button onclick='waterOff()'>Water On</button>");
+	}
+
+	// If power is off say that on website
+	if (!powerOn) {
+		client.println("<p>Power is off</p>");
 	}
 	client.println("</div>");
 
