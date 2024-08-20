@@ -1,6 +1,6 @@
 // Libraries for Ethernet ENC connection for ESP32.
 #include <SPI.h>
-#include <EthernetENC.h>
+#include <Ethernet.h>
 
 // MAC address for the Ethernet shield
 byte mac[] = {
@@ -22,6 +22,8 @@ float temperature = 25;
 
 // Setup
 void setup() {
+
+	Ethernet.init(5);
 	// Begin serial monitor
 	Serial.begin(921600);
 
